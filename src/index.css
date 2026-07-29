@@ -1,0 +1,242 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #e5e7eb;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #d1d5db;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 40s linear infinite;
+  display: flex;
+  width: max-content;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent; 
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db; 
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af; 
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  33% {
+    transform: translate(-40%, -60%) scale(1.2);
+  }
+  66% {
+    transform: translate(-60%, -40%) scale(0.8);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite alternate ease-in-out;
+}
+
+@keyframes flyPath {
+  0% { transform: translate(-20px, 10px) rotate(45deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translate(300px, -150px) rotate(45deg); opacity: 0; }
+}
+.animate-fly-path {
+  animation: flyPath 6s linear infinite;
+}
+
+@keyframes orbitPlane {
+  0% { transform: translate(-50%, -50%) rotate(0deg) translateX(160px) rotate(90deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg) translateX(160px) rotate(90deg); }
+}
+.animate-orbit {
+  animation: orbitPlane 10s linear infinite;
+}
+@keyframes pulseGlobe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.5; }
+}
+.animate-pulse-globe {
+  animation: pulseGlobe 4s ease-in-out infinite;
+}
+
+@keyframes fly1 {
+  0% { top: 40%; left: 70%; transform: rotate(50deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 80%; left: 95%; transform: rotate(50deg); opacity: 0; }
+}
+@keyframes fly2 {
+  0% { top: 40%; left: 70%; transform: rotate(-160deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 25%; left: 15%; transform: rotate(-160deg); opacity: 0; }
+}
+@keyframes fly3 {
+  0% { top: 40%; left: 70%; transform: rotate(-140deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 20%; left: 45%; transform: rotate(-140deg); opacity: 0; }
+}
+@keyframes fly4 {
+  0% { top: 40%; left: 70%; transform: rotate(140deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 75%; left: 25%; transform: rotate(140deg); opacity: 0; }
+}
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; } .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Background removal right-to-left scanning sweep */
+@keyframes scan-line {
+  0% {
+    left: 100%;
+  }
+  100% {
+    left: 0%;
+  }
+}
+
+@keyframes reveal-original {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+@keyframes reveal-transparent {
+  0% {
+    clip-path: inset(0 0 0 100%);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.animate-scan-line {
+  animation: scan-line 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-reveal-original {
+  animation: reveal-original 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-reveal-transparent {
+  animation: reveal-transparent 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+
+
+/* Global Dark Mode Overrides for Tailwind classes */
+.dark {
+  color-scheme: dark;
+}
+.dark body {
+  background-color: #0f172a !important; /* slate-900 */
+  color: #f8fafc !important; /* slate-50 */
+}
+/* Cards & Containers */
+.dark .bg-white {
+  background-color: #1e293b !important; /* slate-800 */
+}
+.dark .bg-slate-50, .dark .bg-gray-50, .dark .bg-slate-100, .dark .bg-gray-100, .dark .bg-slate-150 {
+  background-color: #334155 !important; /* slate-700 */
+}
+/* Hover states */
+.dark .hover\:bg-gray-50:hover, .dark .hover\:bg-slate-50:hover, .dark .hover\:bg-slate-100:hover, .dark .hover\:bg-gray-100:hover {
+  background-color: #475569 !important; /* slate-600 */
+}
+/* Borders */
+.dark .border-gray-200, .dark .border-slate-200, .dark .border-slate-100, .dark .border-gray-100, .dark .border-slate-300 {
+  border-color: #475569 !important; /* slate-600 */
+}
+/* Inputs */
+.dark input, .dark textarea, .dark select {
+  background-color: #0f172a !important; /* slate-900 */
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+.dark input::placeholder, .dark textarea::placeholder {
+  color: #94a3b8 !important; /* slate-400 */
+}
+/* Standard text colors */
+.dark .text-slate-950, .dark .text-gray-950, .dark .text-slate-900, .dark .text-gray-900, .dark .text-slate-800, .dark .text-gray-800, .dark .text-slate-700, .dark .text-gray-700, .dark .text-black {
+  color: #f1f5f9 !important; /* slate-100 */
+}
+.dark .text-slate-600, .dark .text-gray-600, .dark .text-slate-500, .dark .text-gray-500 {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+/* Accents: Blue */
+.dark .bg-blue-50, .dark .bg-blue-100 { background-color: rgba(30, 58, 138, 0.4) !important; }
+.dark .text-blue-900, .dark .text-blue-800, .dark .text-blue-700, .dark .text-blue-600 { color: #93c5fd !important; }
+/* Accents: Emerald/Green */
+.dark .bg-emerald-50, .dark .bg-emerald-100, .dark .bg-green-50, .dark .bg-green-100 { background-color: rgba(6, 78, 59, 0.4) !important; }
+.dark .text-emerald-900, .dark .text-emerald-800, .dark .text-emerald-700, .dark .text-emerald-600, .dark .text-green-900, .dark .text-green-800, .dark .text-green-700, .dark .text-green-600 { color: #6ee7b7 !important; }
+/* Accents: Teal */
+.dark .bg-teal-50, .dark .bg-teal-100 { background-color: rgba(19, 78, 74, 0.4) !important; }
+.dark .text-teal-900, .dark .text-teal-800, .dark .text-teal-700, .dark .text-teal-600 { color: #5eead4 !important; }
+/* Accents: Amber/Yellow */
+.dark .bg-amber-50, .dark .bg-amber-100, .dark .bg-yellow-50, .dark .bg-yellow-100 { background-color: rgba(120, 53, 15, 0.4) !important; }
+.dark .text-amber-900, .dark .text-amber-800, .dark .text-amber-700, .dark .text-amber-600, .dark .text-yellow-900, .dark .text-yellow-800, .dark .text-yellow-700, .dark .text-yellow-600 { color: #fcd34d !important; }
+/* Accents: Orange */
+.dark .bg-orange-50, .dark .bg-orange-100 { background-color: rgba(124, 45, 18, 0.4) !important; }
+.dark .text-orange-900, .dark .text-orange-800, .dark .text-orange-700, .dark .text-orange-600 { color: #fdba74 !important; }
+/* Accents: Red/Rose */
+.dark .bg-rose-50, .dark .bg-rose-100, .dark .bg-red-50, .dark .bg-red-100 { background-color: rgba(136, 19, 55, 0.4) !important; }
+.dark .text-rose-900, .dark .text-rose-800, .dark .text-rose-700, .dark .text-rose-600, .dark .text-red-900, .dark .text-red-800, .dark .text-red-700, .dark .text-red-600 { color: #fda4af !important; }
+/* Accents: Purple/Indigo/Violet */
+.dark .bg-purple-50, .dark .bg-purple-100, .dark .bg-indigo-50, .dark .bg-indigo-100, .dark .bg-violet-50, .dark .bg-violet-100 { background-color: rgba(88, 28, 135, 0.4) !important; }
+.dark .text-purple-900, .dark .text-purple-800, .dark .text-purple-700, .dark .text-purple-600, .dark .text-indigo-900, .dark .text-indigo-800, .dark .text-indigo-700, .dark .text-indigo-600 { color: #d8b4fe !important; }
+
+/* Modals overlays */
+.dark .bg-black\/60, .dark .bg-black\/40, .dark .bg-slate-900\/50 {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+/* Shadows */
+.dark .shadow-sm, .dark .shadow, .dark .shadow-md, .dark .shadow-lg {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}

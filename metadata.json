@@ -1,0 +1,6 @@
+{
+  "name": "Rakhi Internet",
+  "description": "A one-stop solution for CSC digital services, Bhaichara DJ Sound, international courier, and university admissions.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
