@@ -2,7 +2,6 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
 // @ts-ignore
 import creatorImage from "./assets/ai-removebg-preview.png";
 const developerImage = "/n_1.png";
@@ -84,7 +83,6 @@ const HERO_SLIDES = [
     hindiTitle: "भविष्य की डिजिटल सेवाएं",
     subtitle: "Experience the future with our AI-enhanced services for photo editing, document formatting, and more.",
     image: heroBg,
-    video: "/hero_video.mp4.mp4",
     badgeBg: "bg-purple-500/10 text-purple-400 border-purple-500/20",
     accentText: "text-purple-400",
     btnBg: "bg-purple-600 hover:bg-purple-700 shadow-purple-600/30",
@@ -93,7 +91,7 @@ const HERO_SLIDES = [
   {
     id: "csc",
     badge: "CSC Digital Seva (सीएससी ऑनलाइन सेवाएं)",
-    title: "Your Complete Digital & CSC Service Solution",
+    title: "Your Complete Digital & CSC\nService Solution",
     hindiTitle: "राखी इंटरनेट - डिजिटल सेवा केंद्र",
     subtitle:
       "Apply for Aadhaar, PAN card, Government Schemes, utility bill payments, and all official registrations instantly with professional support.",
@@ -106,7 +104,7 @@ const HERO_SLIDES = [
   {
     id: "university",
     badge: "Admissions & Counseling (यूनिवर्सिटी दाखिला केंद्र)",
-    title: "Haryana University Admissions Counseling",
+    title: "Haryana University\nAdmissions Counseling",
     hindiTitle: "विश्वविद्यालय दाखिला एवं काउंसलिंग हब",
     subtitle:
       "Official admission support for Kurukshetra (KUK), MDU, GJU, HAU, CDLU, B.Ed and Distance CDOE courses. Secure your future with expert guidance.",
@@ -120,7 +118,7 @@ const HERO_SLIDES = [
   {
     id: "courier",
     badge: "International Shipping (अंतर्राष्ट्रीय कूरियर सेवा)",
-    title: "Global Parcel & International Courier Service",
+    title: "Global Parcel & International\nCourier Service",
     hindiTitle: "सुपरफास्ट एक्सप्रेस कूरियर डिलीवरी",
     subtitle:
       "Ship products, documents, and domestic packages worldwide at the lowest rates. Guaranteed delivery with door-to-door online live tracking.",
@@ -377,9 +375,6 @@ export default function App() {
 
   useEffect(() => {
     if (isSliderHovered || currentView !== "home") return;
-    
-    // If current slide is a video, don't auto-advance via interval
-    if (HERO_SLIDES[currentSlide].video) return;
 
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
@@ -571,16 +566,7 @@ export default function App() {
                     >
                       Courier Track
                     </button>
-                    <button
-                      onClick={() => {
-                        setCourierPortalTab("calculator");
-                        setCurrentView("courier-portal");
-                        window.scrollTo(0, 0);
-                      }}
-                      className="text-left px-4 py-2.5 text-sm text-gray-700 transition-all duration-300 hover:bg-blue-50/80 hover:text-blue-700 hover:scale-105 hover:translate-x-2 hover:-rotate-1 hover:shadow-md hover:z-10 relative rounded-lg mx-1"
-                    >
-                      Rate List
-                    </button>
+
                   </div>
                 </div>
                 <button
@@ -982,27 +968,6 @@ export default function App() {
                               </span>
                             </div>
                           </button>
-                          <button
-                            onClick={() => {
-                              setCourierPortalTab("calculator");
-                              setCurrentView("courier-portal");
-                              setMobileMenuOpen(false);
-                              window.scrollTo(0, 0);
-                            }}
-                            className="w-full flex items-center gap-2.5 p-2.5 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-xl transition-all text-left"
-                          >
-                            <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
-                              <Calculator className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <span className="text-[9px] text-indigo-600 font-extrabold uppercase tracking-wider block leading-none mb-0.5">
-                                Price Calculator
-                              </span>
-                              <span className="text-xs font-black text-slate-800">
-                                Rate List (रेट चार्ट)
-                              </span>
-                            </div>
-                          </button>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -1184,50 +1149,6 @@ export default function App() {
             {/* Background Images with AnimatePresence */}
             <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
               <AnimatePresence mode="popLayout">
-                {HERO_SLIDES[currentSlide].video && !videoFailed ? (
-                  <motion.div
-                    key={`video-${currentSlide}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.9, ease: "easeInOut" }}
-                    className="absolute inset-0 flex items-center justify-center bg-black"
-                  >
-                    <video
-                      src={HERO_SLIDES[currentSlide].video}
-                      autoPlay
-                      muted
-                      playsInline
-                      poster={HERO_SLIDES[currentSlide].image}
-                      ref={(el) => {
-                        if (el) {
-                          el.playbackRate = 0.85;
-                          el.defaultMuted = true;
-                          el.muted = true;
-                          
-                          el.onerror = (e) => {
-                            console.error("Video loading error:", el.error);
-                            setVideoFailed(true);
-                          };
-                          
-                          const playPromise = el.play();
-                          if (playPromise !== undefined) {
-                            playPromise.catch((error) => {
-                               console.error("Auto-play was prevented:", error);
-                               setVideoFailed(true);
-                            });
-                          }
-                        }
-                      }}
-                      onEnded={() => {
-                        if (!isSliderHovered && currentView === "home") {
-                          setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-                        }
-                      }}
-                      className="w-full h-full object-cover"
-                    />
-                  </motion.div>
-                ) : (
                   <motion.div
                     key={currentSlide}
                     initial={{ opacity: 0, scale: 1.08 }}
@@ -1239,7 +1160,6 @@ export default function App() {
                       backgroundImage: `url(${HERO_SLIDES[currentSlide].image})`,
                     }}
                   />
-                )}
               </AnimatePresence>
               {/* Vignette / Overlay Gradients */}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-slate-950/50" />
@@ -1252,6 +1172,8 @@ export default function App() {
               id="home"
               className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[500px] md:min-h-[620px] z-10 text-center"
             >
+
+
               {/* Manual Left/Right Arrows - Hidden on small mobile, visible & elegant on larger viewports */}
               <button
                 onClick={() =>
@@ -1275,6 +1197,160 @@ export default function App() {
               >
                 <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-0.5 transition-transform" />
               </button>
+
+              {/* Slide Content */}
+              <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center mt-10 md:mt-0">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentSlide}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="flex flex-col items-center w-full"
+                  >
+                    {/* Badge */}
+                    {HERO_SLIDES[currentSlide].badge && (
+                    <div
+                      className={`inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border mb-6 sm:mb-8 backdrop-blur-md shadow-lg ${HERO_SLIDES[currentSlide].badgeBg}`}
+                    >
+                      <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                      <span className="text-xs sm:text-sm font-black tracking-[0.15em] uppercase">
+                        {HERO_SLIDES[currentSlide].badge}
+                      </span>
+                    </div>
+                    )}
+
+                    {/* Titles */}
+                    {HERO_SLIDES[currentSlide].title && (
+                    <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.1] mb-3 sm:mb-4 drop-shadow-lg">
+                      {HERO_SLIDES[currentSlide].title.split('\n').map((line, i) => (
+                        <span key={i} className="block">{line}</span>
+                      ))}
+                    </h2>
+                    )}
+                    {HERO_SLIDES[currentSlide].hindiTitle && (
+                    <h3
+                      className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 drop-shadow-md ${HERO_SLIDES[currentSlide].accentText}`}
+                    >
+                      {HERO_SLIDES[currentSlide].hindiTitle}
+                    </h3>
+                    )}
+
+                    {/* Subtitle */}
+                    {HERO_SLIDES[currentSlide].subtitle && (
+                    <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-8 sm:mb-10 max-w-2xl leading-relaxed drop-shadow">
+                      {HERO_SLIDES[currentSlide].subtitle}
+                    </p>
+                    )}
+
+                    {/* Context-Specific Action Buttons */}
+                    {HERO_SLIDES[currentSlide].type !== "ai" && (
+                      <div className="flex flex-wrap justify-center gap-3 mb-6 w-full" style={{ perspective: "1000px" }}>
+                        {["Narnaund", "Jind", "Uchana"].map((loc, idx) => (
+                          <motion.div
+                            key={loc}
+                            initial={{ opacity: 0, rotateX: 90, z: -50 }}
+                            animate={{ opacity: 1, rotateX: 0, z: 0 }}
+                            transition={{ 
+                              duration: 0.8, 
+                              delay: idx * 0.2, 
+                              type: "spring",
+                              bounce: 0.5
+                            }}
+                            whileHover={{ 
+                              rotateY: 15, 
+                              rotateX: -10, 
+                              scale: 1.1, 
+                              z: 20 
+                            }}
+                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${loc},+Haryana`, '_blank')}
+                            className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-5 py-2.5 rounded-full border border-cyan-500/30 text-cyan-300 text-xs sm:text-sm font-black uppercase tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.2)] cursor-pointer hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] hover:border-cyan-400/60 transition-colors"
+                            style={{ transformStyle: "preserve-3d" }}
+                          >
+                            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]" />
+                            {loc}
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                      {HERO_SLIDES[currentSlide].type === "courier" ? (
+                        <>
+
+                            <button
+                              onClick={() => {
+                                setCourierPortalTab("track");
+                                setCurrentView("courier-portal");
+                                window.scrollTo(0, 0);
+                              }}
+                              className="px-8 py-4 rounded-full font-bold text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 backdrop-blur-md transition-all transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-2 w-full sm:w-auto"
+                            >
+                              Track Shipment <Truck className="w-5 h-5" />
+                            </button>
+                        </>
+                      ) : HERO_SLIDES[currentSlide].type === "university" ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              setCurrentView("university-portal");
+                              window.scrollTo(0, 0);
+                            }}
+                            className={`px-8 py-4 rounded-full font-bold text-white transition-all transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-2 w-full sm:w-auto ${HERO_SLIDES[currentSlide].btnBg}`}
+                          >
+                            Admissions Hub <BookOpen className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setCurrentView("university-portal");
+                              window.scrollTo(0, 0);
+                            }}
+                            className="px-8 py-4 rounded-full font-bold text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 backdrop-blur-md transition-all transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-2 w-full sm:w-auto"
+                          >
+                            Get Counseling <Phone className="w-5 h-5" />
+                          </button>
+                        </>
+                      ) : HERO_SLIDES[currentSlide].type === "csc" ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              setCurrentView("csc-portal");
+                              window.scrollTo(0, 0);
+                            }}
+                            className={`px-8 py-4 rounded-full font-bold text-white transition-all transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-2 w-full sm:w-auto ${HERO_SLIDES[currentSlide].btnBg}`}
+                          >
+                            Open CSC Portal <Monitor className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setCurrentView("csc-portal");
+                              window.scrollTo(0, 0);
+                            }}
+                            className="px-8 py-4 rounded-full font-bold text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 backdrop-blur-md transition-all transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-2 w-full sm:w-auto"
+                          >
+                            All Services <ArrowRight className="w-5 h-5" />
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            if (HERO_SLIDES[currentSlide].type === "ai") {
+                              setPhotoToolsModalOpen(true);
+                            } else {
+                              setCurrentView("csc-portal");
+                              window.scrollTo(0, 0);
+                            }
+                          }}
+                          className={`px-8 py-4 rounded-full font-bold text-white transition-all transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-2 w-full sm:w-auto ${HERO_SLIDES[currentSlide].btnBg}`}
+                        >
+                          Explore Services <ArrowRight className="w-5 h-5" />
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
               {/* Indicators / Progress Dot Trackers */}
               <div className="absolute bottom-5 left-0 right-0 flex justify-center items-center gap-2 z-20">
@@ -1568,16 +1644,7 @@ export default function App() {
                     >
                       <Search className="w-4 h-4" /> Track Package
                     </button>
-                    <button
-                      onClick={() => {
-                        setCourierPortalTab("calculator");
-                        setCurrentView("courier-portal");
-                        window.scrollTo(0, 0);
-                      }}
-                      className="bg-white hover:bg-gray-50 text-emerald-800 border border-emerald-200 font-semibold px-5 py-3 rounded-full transition-colors text-sm flex items-center gap-2 cursor-pointer shadow-xs"
-                    >
-                      <Calculator className="w-4 h-4" /> Check Rates
-                    </button>
+
                   </div>
                 </div>
 

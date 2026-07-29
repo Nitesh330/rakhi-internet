@@ -498,8 +498,8 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
                 {/* Mechanical Shackle Opening Animation */}
                 {isSuccess ? (
                   <motion.div
-                    initial={{ y: 5, rotate: 15, opacity: 0 }}
-                    animate={{ y: 0, rotate: 0, opacity: 1, scale: [0.8, 1.15, 1] }}
+                    initial={{ y: 5, rotate: 15, opacity: 0, scale: 0.8 }}
+                    animate={{ y: 0, rotate: 0, opacity: 1, scale: 1 }}
                     transition={{ type: "spring", stiffness: 300, damping: 18 }}
                   >
                     <Unlock className="w-9 h-9 text-emerald-600 drop-shadow-[0_4px_12px_rgba(16,185,129,0.45)]" />

@@ -272,7 +272,7 @@ const RakhiAirplane = ({ className }: { className?: string }) => (
 );
 
 export default function CourierPortal({ onBackToHome, openContactModal, initialTab = 'track' }: CourierPortalProps) {
-  const [activeTab, setActiveTab] = useState<'track' | 'calculator'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'track'>('track');
   const [trackingId, setTrackingId] = useState('');
   const [carrier, setCarrier] = useState('auto');
   const [loading, setLoading] = useState(false);
@@ -647,25 +647,10 @@ export default function CourierPortal({ onBackToHome, openContactModal, initialT
           </div>
         </div>
 
-        {/* Tab Selection */}
-        <div className="flex bg-white p-2.5 rounded-3xl border border-slate-200/60 shadow-xs mb-8 max-w-md">
-          <button 
-            onClick={() => setActiveTab('track')}
-            className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTab === 'track' ? 'bg-gradient-to-br from-teal-600 to-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}
-          >
-            <Search className="w-4 h-4" /> Multi-Carrier Tracking
-          </button>
-          <button 
-            onClick={() => setActiveTab('calculator')}
-            className={`flex-1 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTab === 'calculator' ? 'bg-gradient-to-br from-teal-600 to-emerald-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}
-          >
-            <Calculator className="w-4 h-4" /> Ship Rate Calculator
-          </button>
-        </div>
 
         {/* Content Tabs */}
         <AnimatePresence mode="wait">
-          {activeTab === 'track' ? (
+          
             <motion.div 
               key="track-view"
               initial={{ opacity: 0, y: 15 }}
@@ -857,214 +842,8 @@ export default function CourierPortal({ onBackToHome, openContactModal, initialT
                   </p>
                 </div>
               )}
+
             </motion.div>
-          ) : (
-            <motion.div 
-              key="calc-view"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              className="space-y-10"
-            >
-              {/* Calculator Panel */}
-              <div className="grid lg:grid-cols-12 gap-8 items-start">
-                
-                {/* Left Side: Input form (5 Cols) */}
-                <div className="lg:col-span-5 bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200/60 shadow-[0_4px_25px_rgba(0,0,0,0.02)] space-y-6">
-                  <div className="flex items-center gap-2 pb-4 border-b border-slate-100 mb-2">
-                    <Sliders className="w-5 h-5 text-teal-600" />
-                    <span className="font-extrabold text-slate-900 text-sm uppercase tracking-wider">Calculate Shipping Quote</span>
-                  </div>
-
-                  {/* Destination Country Selection */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Destination Country</label>
-                    <select
-                      value={countryCode}
-                      onChange={(e) => setCountryCode(e.target.value)}
-                      className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all cursor-pointer"
-                    >
-                      {COUNTRIES.map((c) => (
-                        <option key={c.code} value={c.code}>{c.name}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Weight Inputs */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Package Gross Weight (Kg)</label>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setWeight(Math.max(0.5, +(weight - 0.5).toFixed(1)))}
-                        className="w-11 h-11 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold rounded-xl flex items-center justify-center transition-colors text-lg cursor-pointer"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        max="200"
-                        value={weight}
-                        onChange={(e) => setWeight(parseFloat(e.target.value) || 0.5)}
-                        className="flex-1 p-3 text-center bg-slate-50 border border-slate-200 rounded-xl text-sm font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setWeight(+(weight + 0.5).toFixed(1))}
-                        className="w-11 h-11 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold rounded-xl flex items-center justify-center transition-colors text-lg cursor-pointer"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <p className="text-[10px] text-slate-400 font-medium mt-2">Prices calculated automatically including all international carrier fuel surcharges.</p>
-                  </div>
-
-                  {/* Package Type Categories */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Package Category / प्रकार</label>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <button
-                        type="button"
-                        onClick={() => { setPackType('doc'); if (weight > 2.0) setWeight(0.5); }}
-                        className={`py-3.5 px-4 rounded-xl text-xs font-extrabold border transition-all cursor-pointer flex flex-col items-center gap-1 ${packType === 'doc' ? 'bg-teal-50/50 border-teal-500 text-teal-800 shadow-2xs' : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-white'}`}
-                      >
-                        <span className="text-sm">📄 Document</span>
-                        <span className="text-[9px] text-slate-400 font-normal">Letters, Certificates (&lt;2Kg)</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPackType('parcel')}
-                        className={`py-3.5 px-4 rounded-xl text-xs font-extrabold border transition-all cursor-pointer flex flex-col items-center gap-1 ${packType === 'parcel' ? 'bg-teal-50/50 border-teal-500 text-teal-800 shadow-2xs' : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-white'}`}
-                      >
-                        <span className="text-sm">📦 Parcel / Box</span>
-                        <span className="text-[9px] text-slate-400 font-normal">Boxes, Goods & Parcels</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 bg-sky-50 border border-sky-100 rounded-xl text-xs text-sky-800 leading-normal flex gap-2.5">
-                    <Sparkles className="w-4 h-4 text-sky-500 flex-shrink-0 mt-0.5" />
-                    <span>
-                      Rates are all-inclusive of security checks, baggage handling, and door delivery terminal charges.
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right Side: Shipping Rates Options (7 Cols) */}
-                <div className="lg:col-span-7 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-slate-400 uppercase tracking-wider">
-                      Available Carrier Tariffs ({weightVal} Kg to {selectedCountry.name.split(' (')[0]})
-                    </span>
-                    <span className="text-[10px] font-black text-teal-700 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                      Live Estimates
-                    </span>
-                  </div>
-
-                  <div className="space-y-3.5">
-                    {carrierRates.map((c) => (
-                      <div
-                        key={c.id}
-                        className="bg-white p-5 rounded-2xl border border-slate-200/60 shadow-2xs hover:border-teal-200 hover:shadow-xs transition-all flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center group"
-                      >
-                        <div className="flex-grow space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-extrabold text-slate-900 text-base group-hover:text-teal-600 transition-colors">{c.name}</span>
-                            {c.badge && (
-                              <span className="text-[9px] font-extrabold bg-teal-50 text-teal-700 border border-teal-100/60 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                {c.badge}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{c.provider}</div>
-                          
-                          <div className="pt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                            <span><strong className="font-semibold text-slate-700">Transit:</strong> {c.days}</span>
-                            <span>•</span>
-                            <span className="text-teal-700 font-semibold">Door-to-Door Delivery</span>
-                          </div>
-                        </div>
-
-                        <div className="text-left sm:text-right flex-shrink-0 flex sm:flex-col items-baseline sm:items-end justify-between sm:justify-center w-full sm:w-auto border-t sm:border-t-0 border-slate-100 pt-3 sm:pt-0 gap-3">
-                          <div>
-                            <div className="text-2xl font-black text-teal-600 tracking-tight">
-                              {formatPrice(c.price)}
-                            </div>
-                            <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Estimated Quote</span>
-                          </div>
-                          
-                          <button
-                            onClick={() => openContactModal(`Courier Booking: ${c.name} to ${selectedCountry.name} (${weightVal} Kg)`)}
-                            className="bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs py-2.5 px-4 rounded-xl transition-all flex items-center gap-1 shadow-sm hover:shadow-md cursor-pointer active:scale-95"
-                          >
-                            Book Now <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Pricing Disclaimer */}
-                  <div className="p-4 bg-amber-50 border border-amber-100/60 rounded-2xl text-[11px] text-amber-800 leading-relaxed flex gap-2.5">
-                    <span className="text-base">⚠️</span>
-                    <span>
-                      <strong>Rate Advisory Indicator:</strong> Quoted prices represent general tariffs for booking. Actual prices may differ slightly based on volumetric sizing ratios (L × W × H / 5000) and regulatory duties of the recipient country.
-                    </span>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Grid rate guidelines card */}
-              <div className="bg-white rounded-[2.5rem] border border-slate-200/60 overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.01)]">
-                <div className="bg-slate-50 p-5 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
-                    <Table className="w-4 h-4 text-teal-600" /> Popular Destination Standard Pricing Guidelines (Parcels)
-                  </h4>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">General Tariff Guidelines</span>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
-                        <th className="p-4 pl-6">Destination Country</th>
-                        <th className="p-4">Document (0.5 Kg)</th>
-                        <th className="p-4">Parcel (1.0 Kg)</th>
-                        <th className="p-4">Parcel (5.0 Kg)</th>
-                        <th className="p-4">Parcel (10 Kg)</th>
-                        <th className="p-4">Parcel (20 Kg)</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 text-slate-700 font-semibold">
-                      {rateCardData.map((row, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 pl-6 font-black text-slate-900">{row.country}</td>
-                          <td className="p-4 text-slate-600">{row.doc05}</td>
-                          <td className="p-4 text-teal-600 font-black">{row.kg1}</td>
-                          <td className="p-4 text-slate-600">{row.kg5}</td>
-                          <td className="p-4 text-slate-600">{row.kg10}</td>
-                          <td className="p-4 text-slate-600">{row.kg20}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="p-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between flex-wrap gap-4 text-[11px] text-slate-500">
-                  <span>Rates shown above represent starting price levels inclusive of standard fuel indices.</span>
-                  <button
-                    onClick={() => openContactModal('International Courier Complete Tariff Booklet')}
-                    className="text-teal-700 hover:text-teal-800 font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer"
-                  >
-                    Request Full Rate PDF <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
         </AnimatePresence>
 
         {/* Dynamic FAQ Help block */}
