@@ -7,6 +7,8 @@ import {
   Mic, MicOff
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 // @ts-ignore
 import aiBotImage from '../assets/images/regenerated_image_1783931513099.png';
 
@@ -41,6 +43,7 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
   const [attachedImagePreview, setAttachedImagePreview] = useState<string | null>(null);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -194,25 +197,76 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
   const updateCurrentSession = (newMessages: Message[]) => {
     setMessages(newMessages);
     
-    // Auto-generate title based on first user message if title is "New Chat"
-    let title = 'New Chat';
-    const userMessages = newMessages.filter(m => m.role === 'user');
-    if (userMessages.length > 0) {
-      title = userMessages[0].text.substring(0, 30);
-      if (userMessages[0].text.length > 30) title += '...';
-      if (!title.trim() && userMessages[0].image) title = 'Image Analysis';
-    }
-
-    const updatedSessions = sessions.map(s => {
-      if (s.id === currentSessionId) {
-        return { ...s, messages: newMessages, title, updatedAt: Date.now() };
+    setSessions(prevSessions => {
+      let title = 'New Chat';
+      const userMessages = newMessages.filter(m => m.role === 'user');
+      if (userMessages.length > 0) {
+        title = userMessages[0].text.substring(0, 30);
+        if (userMessages[0].text.length > 30) title += '...';
+        if (!title.trim() && userMessages[0].image) title = 'Image Analysis';
       }
-      return s;
+
+      let sessionExists = false;
+      const updatedSessions = prevSessions.map(s => {
+        if (s.id === currentSessionId) {
+          sessionExists = true;
+          return { ...s, messages: newMessages, title, updatedAt: Date.now() };
+        }
+        return s;
+      });
+
+      let finalSessions = updatedSessions;
+      if (!sessionExists && currentSessionId) {
+        finalSessions = [{
+          id: currentSessionId,
+          title,
+          messages: newMessages,
+          updatedAt: Date.now()
+        }, ...prevSessions];
+      }
+
+      finalSessions.sort((a, b) => b.updatedAt - a.updatedAt);
+      localStorage.setItem('rakhi_chat_sessions', JSON.stringify(finalSessions));
+      return finalSessions;
     });
-    
-    // Sort by recently updated
-    updatedSessions.sort((a, b) => b.updatedAt - a.updatedAt);
-    saveSessionsToLocal(updatedSessions);
+  };
+
+  const clearCurrentChat = () => {
+    const clearedMessages = [defaultGreeting];
+    setMessages(clearedMessages);
+    setAttachedImage(null);
+    setAttachedImagePreview(null);
+    setInput('');
+    setShowClearConfirm(false);
+
+    setSessions(prevSessions => {
+      let found = false;
+      const updated = prevSessions.map(s => {
+        if (s.id === currentSessionId) {
+          found = true;
+          return {
+            ...s,
+            messages: clearedMessages,
+            title: 'New Chat',
+            updatedAt: Date.now()
+          };
+        }
+        return s;
+      });
+
+      let final = updated;
+      if (!found && currentSessionId) {
+        final = [{
+          id: currentSessionId || Date.now().toString(),
+          title: 'New Chat',
+          messages: clearedMessages,
+          updatedAt: Date.now()
+        }, ...prevSessions];
+      }
+
+      localStorage.setItem('rakhi_chat_sessions', JSON.stringify(final));
+      return final;
+    });
   };
 
   const scrollToBottom = () => {
@@ -278,8 +332,6 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
     setIsLoading(true);
 
     try {
-      updateCurrentSession([...newMessages, { role: 'model', text: '' }]);
-      
       const response = await fetch('/api/chat-stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -309,6 +361,9 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
           if (isFirstChunk) {
             setIsLoading(false);
             isFirstChunk = false;
+            // Add the empty model message placeholder
+            setMessages(prev => [...prev, { role: 'model', text: '' }]);
+            // Give React a tick to add it before we update it
           }
           const chunk = decoder.decode(value, { stream: true });
           const lines = chunk.split('\n');
@@ -339,7 +394,7 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
       
       // Update session once fully complete
       setMessages(prev => {
-        updateCurrentSession(prev);
+        setTimeout(() => updateCurrentSession(prev), 0);
         return prev;
       });
 
@@ -348,7 +403,7 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
       setMessages(prev => {
         const updated = [...prev];
         if (updated[updated.length - 1].text === '') {
-          updated[updated.length - 1].text = 'Sorry, I am having trouble connecting to the Gemini server. Please check your network and try again.';
+          updated[updated.length - 1].text = 'Sorry, I am having trouble connecting to the server. Please check your network and try again.';
         }
         updateCurrentSession(updated);
         return updated;
@@ -372,8 +427,6 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
     setIsLoading(true);
 
     try {
-      updateCurrentSession([...newMessages, { role: 'model', text: '' }]);
-      
       const response = await fetch('/api/chat-stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -402,6 +455,9 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
           if (isFirstChunk) {
             setIsLoading(false);
             isFirstChunk = false;
+            // Add the empty model message placeholder
+            setMessages(prev => [...prev, { role: 'model', text: '' }]);
+            // Give React a tick to add it before we update it
           }
           const chunk = decoder.decode(value, { stream: true });
           const lines = chunk.split('\n');
@@ -430,7 +486,7 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
       }
       
       setMessages(prev => {
-        updateCurrentSession(prev);
+        setTimeout(() => updateCurrentSession(prev), 0);
         return prev;
       });
 
@@ -439,7 +495,7 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
       setMessages(prev => {
         const updated = [...prev];
         if (updated[updated.length - 1].text === '') {
-          updated[updated.length - 1].text = 'Sorry, I am having trouble connecting to the Gemini server. Please check your network and try again.';
+          updated[updated.length - 1].text = 'Sorry, I am having trouble connecting to the server. Please check your network and try again.';
         }
         updateCurrentSession(updated);
         return updated;
@@ -471,32 +527,39 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
             <ChevronLeft className="w-4 h-4" /> Home
           </button>
 
-          {/* Unified Ultra Power Mode Badge */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl text-indigo-700 font-extrabold text-xs shadow-sm">
-            <Zap className="w-3.5 h-3.5 text-indigo-600 animate-pulse" />
-            <span>Ultra Power Mode</span>
-          </div>
+
 
           {/* New Chat / Clear Chat Button */}
-          <button
-            onClick={() => {
-              if (confirm("Are you sure you want to clear this conversation?")) {
-                setMessages([defaultGreeting]);
-                setAttachedImage(null);
-                setAttachedImagePreview(null);
-                setInput('');
-              }
-            }}
-            className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-red-600 border border-slate-200 hover:border-red-100 rounded-xl transition-all text-xs font-bold cursor-pointer"
-            title="Clear Chat"
-          >
-            <Trash2 className="w-4 h-4" />
-            <span className="hidden md:inline">Clear Chat</span>
-          </button>
+          {showClearConfirm ? (
+            <div className="flex items-center gap-1.5 bg-red-50 px-2.5 py-1.5 rounded-xl border border-red-200">
+              <span className="text-[11px] font-bold text-red-700">Clear chat?</span>
+              <button
+                onClick={clearCurrentChat}
+                className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all cursor-pointer shadow-sm"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                className="px-2 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition-all cursor-pointer"
+              >
+                No
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowClearConfirm(true)}
+              className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-red-600 border border-slate-200 hover:border-red-100 rounded-xl transition-all text-xs font-bold cursor-pointer"
+              title="Clear Chat"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span className="hidden md:inline">Clear Chat</span>
+            </button>
+          )}
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar flex flex-col gap-6 scroll-smooth bg-slate-50 relative">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar flex flex-col gap-6 scroll-smooth bg-gradient-to-b from-slate-50 via-white to-slate-50 relative">
           {messages.length <= 1 ? (
             <div className="flex flex-col gap-8 py-8 px-2 max-w-4xl mx-auto w-full relative z-10">
               {/* Grid / Ambient Background Details */}
@@ -504,14 +567,76 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
 
               {/* Hero Header */}
               <div className="flex flex-col items-center text-center relative z-10">
-                <div className="relative mb-4 group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full blur-md opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-pulse" />
-                  <div className="relative w-20 h-20 rounded-full overflow-hidden border border-indigo-500 bg-white p-1 shadow-lg">
-                    <img src={aiBotImage} alt="Rakhi Internet AI" className="w-full h-full object-cover rounded-full scale-[1.1]" />
-                  </div>
-                  <div className="absolute bottom-0 right-1 bg-emerald-500 border-2 border-white w-4 h-4 rounded-full flex items-center justify-center shadow-md">
+                <div className="relative mb-8 flex items-center justify-center w-32 h-32" style={{ transformStyle: 'preserve-3d' }}>
+                  {/* 3D Inner Core Glow */}
+                  <motion.div 
+                    className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl pointer-events-none"
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                  
+                  {/* Outer 3D Gyroscopic Orbit Ring 1 */}
+                  <motion.div
+                    animate={{ rotateZ: [0, 360], rotateX: [70, 75, 70] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    className="absolute w-full h-full border-2 border-dashed border-blue-400/60 shadow-[0_0_15px_rgba(59,130,246,0.4)] rounded-full pointer-events-none"
+                    style={{ transformStyle: 'preserve-3d' }}
+                  >
+                    <motion.div 
+                      animate={{ scale: [0.8, 1.5, 0.8] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-cyan-400 shadow-[0_0_12px_#22d3ee] rounded-full"
+                    />
+                  </motion.div>
+
+                  {/* Outer 3D Gyroscopic Orbit Ring 2 */}
+                  <motion.div
+                    animate={{ rotateZ: [360, 0], rotateY: [65, 70, 65] }}
+                    transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                    className="absolute w-full h-full border-2 border-indigo-400/60 shadow-[0_0_15px_rgba(99,102,241,0.3)] rounded-full pointer-events-none scale-110"
+                    style={{ transformStyle: 'preserve-3d' }}
+                  >
+                    <motion.div 
+                      animate={{ scale: [1, 1.8, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-indigo-400 shadow-[0_0_10px_#818cf8] rounded-full"
+                    />
+                  </motion.div>
+
+                  {/* Central Avatar with Glassmorphism */}
+                  <motion.div 
+                    animate={{ y: [-6, 6, -6] }}
+                    transition={{ y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
+                    className="relative w-20 h-20 rounded-full border border-blue-300/40 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(59,130,246,0.4)] flex items-center justify-center overflow-hidden z-10" 
+                    style={{ transform: 'translateZ(20px)' }}
+                  >
+                    <img
+                      src={aiBotImage}
+                      alt="AI Bot"
+                      draggable="false"
+                      className="w-full h-full object-cover scale-[1.1] pointer-events-none select-none"
+                    />
+                    {/* Glass highlight */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent opacity-50 z-20 pointer-events-none" />
+                  </motion.div>
+                  
+                  {/* 3D Platform/Shadow under the bot */}
+                  <motion.div 
+                     className="absolute -bottom-6 w-24 h-5 bg-blue-500/40 rounded-[100%] blur-md"
+                     animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.2, 0.5] }}
+                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                     style={{ transform: 'rotateX(75deg)' }}
+                  />
+                  
+                  {/* Online Status Dot */}
+                  <motion.div 
+                     animate={{ y: [-6, 6, -6] }}
+                     transition={{ y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
+                     className="absolute bottom-4 right-5 bg-emerald-500 border-2 border-white w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20" 
+                     style={{ transform: 'translateZ(30px)' }}
+                  >
                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
-                  </div>
+                  </motion.div>
                 </div>
                 
                 <span className="inline-flex items-center gap-1.5 py-1 px-3 bg-indigo-50 rounded-full text-[10px] font-bold text-indigo-700 border border-indigo-100 mb-3 tracking-wider uppercase">
@@ -541,8 +666,8 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
                 <div key={i} className={`flex gap-3 max-w-3xl ${msg.role === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}>
                   <div className={`flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center border shadow-sm ${
                     msg.role === 'user' 
-                      ? 'bg-white  border-slate-200  text-slate-500 ' 
-                      : 'bg-gradient-to-br from-blue-600 to-cyan-500 border-blue-500 shadow-md p-0 overflow-hidden'
+                      ? 'bg-white border-slate-200 text-indigo-500 shadow-sm' 
+                      : 'bg-gradient-to-br from-blue-600 to-cyan-500 border-blue-500 shadow-md p-0 overflow-hidden ring-2 ring-white'
                   }`}>
                     {msg.role === 'user' ? (
                       <User className="w-5 h-5" />
@@ -554,8 +679,8 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
                   <div className="flex flex-col gap-1.5 max-w-[calc(100%-3rem)]">
                     <div className={`px-5 py-4 rounded-3xl text-sm leading-relaxed shadow-lg border relative group ${
                       msg.role === 'user' 
-                        ? 'bg-gradient-to-br from-blue-600 to-indigo-600 border-blue-500 text-white rounded-tr-none shadow-blue-500/10' 
-                        : 'bg-white  border-slate-200/80  text-slate-800  rounded-tl-none'
+                        ? 'bg-gradient-to-br from-indigo-500 to-blue-600 border-transparent text-white rounded-tr-none shadow-md shadow-blue-500/20' 
+                        : 'bg-white border-transparent text-slate-800 rounded-tl-none shadow-md shadow-slate-200/40 ring-1 ring-slate-100'
                     }`}>
                       {msg.image && (
                         <div className="mb-3 rounded-xl overflow-hidden border border-slate-200  max-w-sm">
@@ -567,8 +692,22 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
                         </div>
                       )}
                       
-                      <div className="whitespace-pre-line font-medium text-[14px] tracking-wide leading-relaxed">
-                        {msg.text}
+                      <div className="font-medium text-[15px] tracking-wide leading-relaxed">
+                        <ReactMarkdown 
+                          remarkPlugins={[remarkGfm]} 
+                          components={{ 
+                            a: ({node, ...props}) => <a {...props} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer" />,
+                            p: ({node, ...props}) => <p {...props} className="mb-2 last:mb-0" />,
+                            ul: ({node, ...props}) => <ul {...props} className="list-disc pl-5 mb-2" />,
+                            ol: ({node, ...props}) => <ol {...props} className="list-decimal pl-5 mb-2" />,
+                            li: ({node, ...props}) => <li {...props} className="mb-1" />,
+                            h1: ({node, ...props}) => <h1 {...props} className="text-lg font-bold mt-4 mb-2" />,
+                            h2: ({node, ...props}) => <h2 {...props} className="text-md font-bold mt-3 mb-2" />,
+                            h3: ({node, ...props}) => <h3 {...props} className="text-base font-bold mt-2 mb-1" />
+                          }}
+                        >
+                          {msg.text}
+                        </ReactMarkdown>
                       </div>
 
                       {msg.generatedImage && (
@@ -612,10 +751,35 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
                   <div className="flex-shrink-0 w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 border border-blue-500 flex items-center justify-center shadow-md overflow-hidden p-0 animate-pulse">
                     <img src={aiBotImage} alt="AI Loading" className="w-full h-full object-cover scale-[1.2]" />
                   </div>
-                  <div className="px-5 py-4 rounded-3xl bg-white  border border-slate-200  rounded-tl-none flex items-center gap-2 h-[52px] shadow-lg">
-                    <div className="w-2 h-2 bg-blue-500  rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-500  rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-500  rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="px-5 py-4 rounded-3xl bg-white border border-slate-200 rounded-tl-none flex items-center gap-3 h-[52px] shadow-lg" style={{ perspective: '800px' }}>
+                    <div className="flex gap-2 relative z-10" style={{ transformStyle: 'preserve-3d' }}>
+                      {[0, 1, 2].map((i) => (
+                        <motion.div
+                          key={i}
+                          animate={{ 
+                            y: [-4, 4, -4],
+                            rotateX: [0, 180, 360],
+                            rotateY: [0, 180, 360],
+                            scale: [0.8, 1.2, 0.8]
+                          }}
+                          transition={{ 
+                            duration: 2, 
+                            repeat: Infinity, 
+                            ease: "easeInOut",
+                            delay: i * 0.3
+                          }}
+                          className="w-2.5 h-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-md shadow-[0_0_10px_rgba(59,130,246,0.6)]"
+                          style={{ transformStyle: 'preserve-3d' }}
+                        />
+                      ))}
+                    </div>
+                    <motion.span 
+                      animate={{ opacity: [0.4, 1, 0.4] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="text-[13px] font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent ml-1"
+                    >
+                      Analyzing...
+                    </motion.span>
                   </div>
                 </div>
               )}
@@ -695,7 +859,7 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
                     ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-400 hover:from-amber-600 hover:to-orange-600 shadow-md shadow-amber-500/20' 
                     : 'bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-800 border-slate-200'
                 }`}
-                title={generateImageMode ? "Image Mode Active (gemini-3.1-flash-image-preview) - Click to disable" : "Switch to Image Creator/Editor Mode"}
+                title={generateImageMode ? "Image Mode Active (Image generation preview) - Click to disable" : "Switch to Image Creator/Editor Mode"}
               >
                 <Sparkles className={`w-5 h-5 ${generateImageMode ? 'animate-pulse text-amber-100' : ''}`} />
                 {generateImageMode && (
@@ -706,7 +870,7 @@ export default function ChatPortal({ onBack }: { onBack: () => void }) {
                 )}
               </button>
 
-              <div className="relative flex-1 bg-slate-50  border border-slate-200  focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500/30 rounded-3xl transition-all">
+              <div className="relative flex-1 bg-white border border-slate-200 shadow-sm focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-500/10 rounded-3xl transition-all overflow-hidden">
                 <textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}

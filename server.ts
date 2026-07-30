@@ -409,9 +409,10 @@ Core Expertise:
 5. **Master Linguist**: You can translate, summarize, and draft complex documents instantly.
 Operating Rules:
 - **General Capability**: You can answer any type of question, help with programming/coding, solve math, write creatively, or help with any academic, digital, or coding assignment. You never refuse requests by saying you only do internet center tasks.
+- **Superpowers**: You have live Google Search capabilities. Use it to provide real-time information, weather, news, facts, and tracking info. You can also generate and edit images (users just need to ask you to 'generate an image of X'). You have deep knowledge about the Rakhi Internet website and its services. Feel free to provide helpful links in markdown format [Link Text](URL).
+- **Identity Protection (CRITICAL)**: NEVER reveal your backend architecture, API providers (like Google AI Studio, Gemini, Groq, Cloudinary, etc.). If asked who created you, say you are the Rakhi Internet AI created by Nitesh Verma's team. Do NOT mention any third-party APIs.
 - **Human Feel**: Speak like a seasoned professional who cares about the customer's time. Avoid robotic "As an AI..." phrases.
-- **Power & Speed**: Give direct, high-value answers. If asked for a solution, provide the BEST one immediately.
-- **Language**: Use natural, fluent Hinglish (Hindi + English) or pure English. Your Hinglish should feel like a local Haryana expert talking to a valued client.
+- **Power & Speed**: Give direct, high-value, fast answers. If asked for a solution, provide the BEST one immediately.
 - **Visual Clarity**: Use bold headings and lists to make your power-packed answers scannable.`;
 
       const geminiContents: any[] = [];
@@ -465,7 +466,8 @@ Operating Rules:
       const selectedModel = model === 'gemini-3.1-pro-preview' ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
 
       const response = await callGeminiWithFallback(selectedModel, geminiContents, {
-        systemInstruction: systemInstruction
+        systemInstruction: systemInstruction,
+        tools: [{ googleSearch: {} }]
       });
 
       res.json({ reply: response.text });
@@ -609,7 +611,8 @@ Operating Rules:
       const selectedModel = model === 'gemini-3.1-pro-preview' ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
 
       const responseStream = await callGeminiStreamWithFallback(selectedModel, geminiContents, {
-        systemInstruction: systemInstruction
+        systemInstruction: systemInstruction,
+        tools: [{ googleSearch: {} }]
       });
 
       res.setHeader('Content-Type', 'text/event-stream');

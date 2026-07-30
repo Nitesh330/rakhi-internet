@@ -129,6 +129,18 @@
 }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; } .hide-scrollbar::-webkit-scrollbar { display: none; }
 
+@keyframes drive-truck {
+  0% { transform: perspective(400px) rotateY(0deg) rotateX(0deg) translate3d(0, 0, 0); }
+  25% { transform: perspective(400px) rotateY(-15deg) rotateX(10deg) translate3d(-1px, -2px, 5px); }
+  50% { transform: perspective(400px) rotateY(-25deg) rotateX(0deg) translate3d(1px, 0px, 10px); }
+  75% { transform: perspective(400px) rotateY(-10deg) rotateX(-5deg) translate3d(2px, -1.5px, 5px); }
+  100% { transform: perspective(400px) rotateY(0deg) rotateX(0deg) translate3d(0, 0, 0); }
+}
+
+.animate-drive-truck {
+  animation: drive-truck 0.8s linear infinite;
+}
+
 /* Background removal right-to-left scanning sweep */
 @keyframes scan-line {
   0% {

@@ -595,7 +595,7 @@ const PhotoTools: React.FC<PhotoToolsProps> = ({ initialTab }) => {
   };
 
   // Track hover coordinate for brush outline
-  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleCanvasMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setBrushPos({
       x: e.clientX - rect.left,

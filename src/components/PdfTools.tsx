@@ -638,7 +638,7 @@ export default function PdfTools() {
       // ---- COMPARE ----
       else if (activeTool === 'compare') {
         if (selectedFiles.length < 2) throw new Error('Upload 2 PDF files to compare.');
-        const [d1, d2] = await Promise.all(selectedFiles.slice(0,2).map(f => PDFDocument.load(f.file.arrayBuffer(), { ignoreEncryption:true })));
+        const [d1, d2] = await Promise.all(selectedFiles.slice(0,2).map(async f => PDFDocument.load(await f.file.arrayBuffer(), { ignoreEncryption:true })));
         const c1 = d1.getPageCount(), c2 = d2.getPageCount();
         const report = `## PDF Comparison Report\n- **File 1**: ${selectedFiles[0].file.name} (${c1} pages, ${Math.round(selectedFiles[0].file.size/1024)} KB)\n- **File 2**: ${selectedFiles[1].file.name} (${c2} pages, ${Math.round(selectedFiles[1].file.size/1024)} KB)\n\n### Audit\n- **Pages**: ${c1===c2 ? '✅ Match' : `⚠️ Mismatch (${c1} vs ${c2})`}\n- **Size delta**: ${Math.abs(selectedFiles[0].file.size-selectedFiles[1].file.size)===0 ? '✅ Identical' : `⚠️ ${Math.round(Math.abs(selectedFiles[0].file.size-selectedFiles[1].file.size)/1024)} KB difference`}`;
         setAiResponseText(report);

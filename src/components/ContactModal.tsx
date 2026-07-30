@@ -152,7 +152,7 @@ export default function ContactModal({ isOpen, onClose, defaultBranch = 'jind' }
                     return (
                       <button
                         key={key}
-                        onClick={() => setSelectedBranch(key)}
+                        onClick={() => setSelectedBranch(key as 'narnaund' | 'jind' | 'uchana')}
                         className={`w-full text-left p-3.5 rounded-2xl border transition-all duration-300 flex items-center gap-3 cursor-pointer relative group/btn ${
                           isSelected
                             ? `bg-white border-slate-900 shadow-[0_8px_20px_rgba(0,0,0,0.03)]`
