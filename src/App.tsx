@@ -5,12 +5,12 @@
 // @ts-ignore
 import creatorImage from "./assets/ai-removebg-preview.png";
 const developerImage = "/nn.png";
-import manojImage from "./assets/images/regenerated_image_1783931513099.png";
-const manishImage = "/manish.png?v=1784699887";
-const sonuImage = "/sonu.png?v=1784700438";
-const ashishImage = "/Ashish.png?v=1784699767";
+const manojImage = "/manoj.png";
+const manishImage = "/manish.png";
+const sonuImage = "/sonu.png";
+const ashishImage = "/Ashish.png";
 
-const pankajImage = "/pankaj.png?v=1784700196";
+const pankajImage = "/pankaj.png";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Moon,
