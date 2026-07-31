@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Image as ImageIcon, Sparkles, Download, Scissors, Shirt, RefreshCw, Trash2, Palette, Check, Sliders, ImagePlus, CheckCircle, FileImageIcon, Eye, Undo, Redo, RotateCw, FlipHorizontal, FlipVertical, Eraser, Move } from 'lucide-react';
 import { motion } from 'motion/react';
+
 import { removeBackground } from '@imgly/background-removal';
 
 let activeRemovalPromise: Promise<void> = Promise.resolve();
-
 const queuedRemoveBackground = async (image: string | URL | Blob, config?: any): Promise<Blob> => {
   const currentPromise = activeRemovalPromise;
   let resolveCurrent: () => void = () => {};
@@ -20,8 +20,7 @@ const queuedRemoveBackground = async (image: string | URL | Blob, config?: any):
 
   try {
     const result = await removeBackground(image, {
-      ...config,
-      publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal-data@1.7.0/dist/'
+      ...config
     });
     return result;
   } finally {
@@ -205,7 +204,7 @@ const PhotoTools: React.FC<PhotoToolsProps> = ({ initialTab }) => {
         setIsolatingClothId(newId);
         try {
           const blob = await queuedRemoveBackground(url, {
-            model: 'isnet_quint8',
+            model: 'isnet',
             device: 'gpu'
           });
           const isolatedUrl = URL.createObjectURL(blob);
@@ -229,7 +228,7 @@ const PhotoTools: React.FC<PhotoToolsProps> = ({ initialTab }) => {
       if (cloth && !isolatedClothes[cloth.id]) {
         setIsolatingClothId(cloth.id);
         queuedRemoveBackground(cloth.url, {
-          model: 'isnet_quint8',
+          model: 'isnet',
           device: 'gpu'
         }).then((blob) => {
           const url = URL.createObjectURL(blob);
@@ -373,7 +372,7 @@ const PhotoTools: React.FC<PhotoToolsProps> = ({ initialTab }) => {
     
     try {
       const blob = await queuedRemoveBackground(selectedImage, {
-        model: 'isnet_quint8',
+        model: 'isnet',
         device: 'gpu',
         progress: (status, current, total) => {
           const pct = Math.round((current / total) * 100);
@@ -1099,17 +1098,7 @@ const PhotoTools: React.FC<PhotoToolsProps> = ({ initialTab }) => {
           >
             <Scissors className="w-3.5 h-3.5" /> Background Remover
           </button>
-          <button
-            onClick={() => {
-              setActiveTab('clothes-changer');
-              setSelectedImage(null);
-              setResultImage(null);
-              setTransparentResult(null);
-            }}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 ${activeTab === 'clothes-changer' ? 'bg-white text-purple-600 shadow-sm' : 'text-slate-600'}`}
-          >
-            <Shirt className="w-3.5 h-3.5" /> AI Outfit Changer
-          </button>
+
         </div>
         
         {selectedImage && (
@@ -1147,9 +1136,45 @@ const PhotoTools: React.FC<PhotoToolsProps> = ({ initialTab }) => {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-md mx-auto bg-white rounded-2xl shadow-md border border-slate-200/60 p-5 text-center"
+              className={`mx-auto bg-white rounded-2xl shadow-md border border-slate-200/60 p-5 ${activeTab === 'bg-remover' ? 'max-w-4xl grid md:grid-cols-2 gap-8 items-center' : 'max-w-md text-center'}`}
             >
-              <div className="border-2 border-dashed border-slate-200 hover:border-slate-350 rounded-xl p-6 md:p-8 transition-all bg-slate-50/50 hover:bg-white group">
+              {activeTab === 'bg-remover' && (
+                <div className="hidden md:flex flex-col items-center justify-center p-6 relative perspective-[1000px]">
+                  <div className="text-center mb-8">
+                    <h3 className="text-xl font-black text-slate-800 bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-emerald-600">Smart Background Remover</h3>
+                    <p className="text-xs text-slate-500 mt-2">Remove backgrounds instantly with AI precision.</p>
+                  </div>
+                  <motion.div 
+                    className="relative w-48 h-48 preserve-3d"
+                    animate={{ rotateY: [0, 15, -15, 0], rotateX: [0, 5, -5, 0] }}
+                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+                  >
+                    {/* Foreground Object */}
+                    <motion.div 
+                      className="absolute inset-0 z-20 flex items-center justify-center translate-z-12"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                    >
+                      <div className="w-24 h-32 bg-gradient-to-b from-teal-400 to-teal-600 rounded-full shadow-2xl flex items-center justify-center border-4 border-white">
+                        <Scissors className="w-8 h-8 text-white" />
+                      </div>
+                    </motion.div>
+                    
+                    {/* Background separating */}
+                    <motion.div 
+                      className="absolute inset-0 z-10 bg-slate-200 rounded-2xl border-2 border-dashed border-slate-300"
+                      animate={{ 
+                        opacity: [1, 0, 0, 1],
+                        translateZ: [0, -50, -50, 0],
+                        scale: [1, 0.8, 0.8, 1]
+                      }}
+                      transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                    />
+                  </motion.div>
+                </div>
+              )}
+
+              <div className={`border-2 border-dashed border-slate-200 hover:border-slate-350 rounded-xl p-6 md:p-8 transition-all bg-slate-50/50 hover:bg-white group ${activeTab === 'bg-remover' ? 'h-full flex flex-col items-center justify-center text-center' : ''}`}>
                 <input
                   type="file"
                   accept="image/*"
@@ -1158,12 +1183,12 @@ const PhotoTools: React.FC<PhotoToolsProps> = ({ initialTab }) => {
                   id="photo-upload"
                 />
                 <label htmlFor="photo-upload" className="cursor-pointer flex flex-col items-center">
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3 ${activeTab === 'bg-remover' ? 'bg-teal-50 text-teal-600' : 'bg-purple-50 text-purple-600'}`}>
-                    <Upload className="w-5 h-5 animate-bounce" />
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${activeTab === 'bg-remover' ? 'bg-teal-50 text-teal-600' : 'bg-purple-50 text-purple-600'}`}>
+                    <Upload className="w-6 h-6 animate-bounce" />
                   </div>
-                  <h3 className="text-xs font-bold text-slate-800 mb-0.5">Upload picture</h3>
-                  <p className="text-[10px] text-slate-400 mb-4">Supports JPEG, PNG (Up to 5MB)</p>
-                  <div className={`px-4 py-1.5 rounded-lg text-xs font-bold text-white shadow-xs transition-transform active:scale-95 ${activeTab === 'bg-remover' ? 'bg-teal-600 hover:bg-teal-700' : 'bg-purple-600 hover:bg-purple-700'}`}>
+                  <h3 className="text-sm font-bold text-slate-800 mb-1">Upload your picture</h3>
+                  <p className="text-[11px] text-slate-500 mb-5">Supports JPEG, PNG (Up to 5MB)</p>
+                  <div className={`px-5 py-2.5 rounded-xl text-xs font-bold text-white shadow-md transition-transform active:scale-95 ${activeTab === 'bg-remover' ? 'bg-teal-600 hover:bg-teal-700 shadow-teal-600/20' : 'bg-purple-600 hover:bg-purple-700 shadow-purple-600/20'}`}>
                     Choose File
                   </div>
                 </label>
@@ -1507,31 +1532,77 @@ const PhotoTools: React.FC<PhotoToolsProps> = ({ initialTab }) => {
                               </div>
                             </div>
                             
-                            <div className="grid grid-cols-2 gap-2">
-                              <button
+                            <div className="pt-3 border-t border-teal-100/50 mt-2">
+                              <span className="text-[12px] font-bold text-teal-900 mb-3 block text-center uppercase tracking-wider">Choose Background Color</span>
+                              <div className="flex flex-wrap gap-2.5 items-center justify-center mb-6">
+                                <button
+                                  type="button"
+                                  onClick={() => setBackdropType('transparent')}
+                                  className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAACVJREFUKFNjZCASMDKgAnv37v3/n5qaiiQJM1DDiOhUoqE70AgA414MF/xT+2gAAAAASUVORK5CYII=')] ${backdropType === 'transparent' ? 'border-teal-500 scale-125 shadow-md z-10' : 'border-slate-300 hover:scale-110'}`}
+                                  title="Transparent"
+                                />
+                                {PRESET_BG_COLORS.map(c => (
+                                  <button
+                                    key={c.id}
+                                    type="button"
+                                    onClick={() => {
+                                      setBackdropType('color');
+                                      setBgColor(c.value);
+                                      setShowCustomPicker(false);
+                                    }}
+                                    className={`w-9 h-9 rounded-full border-2 transition-all flex items-center justify-center shadow-sm ${backdropType === 'color' && bgColor === c.value && !showCustomPicker ? 'border-teal-500 scale-125 shadow-md z-10' : 'border-white hover:scale-110'}`}
+                                    style={{ backgroundColor: c.value }}
+                                    title={c.name}
+                                  >
+                                    {backdropType === 'color' && bgColor === c.value && !showCustomPicker && (
+                                      <CheckCircle className={`w-4 h-4 ${c.value === '#FFFFFF' || c.value === '#F1F5F9' ? 'text-slate-800' : 'text-white'}`} />
+                                    )}
+                                  </button>
+                                ))}
+                                <div className="relative">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setBackdropType('color');
+                                      setShowCustomPicker(!showCustomPicker);
+                                    }}
+                                    className={`w-9 h-9 rounded-full border-2 transition-all flex items-center justify-center bg-gradient-to-br from-red-500 via-green-500 to-blue-500 shadow-sm ${backdropType === 'color' && showCustomPicker ? 'border-teal-500 scale-125 shadow-md z-10' : 'border-white hover:scale-110'}`}
+                                    title="Custom Color"
+                                  >
+                                    <Palette className="w-4 h-4 text-white drop-shadow-sm" />
+                                  </button>
+                                  {showCustomPicker && backdropType === 'color' && (
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-50 p-3 bg-white rounded-2xl shadow-2xl border border-slate-100">
+                                      <input
+                                        type="color"
+                                        value={bgColor}
+                                        onChange={(e) => setBgColor(e.target.value)}
+                                        className="w-12 h-12 rounded-xl cursor-pointer border-0 p-0 shadow-inner"
+                                      />
+                                      <div className="text-[9px] text-center font-bold text-slate-400 mt-1 uppercase tracking-wider">Custom</div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              <motion.button
                                 type="button"
-                                onClick={() => {
-                                  setBackdropType('transparent');
-                                  setTimeout(() => handleDownloadArtwork(), 50);
-                                }}
+                                whileHover={{ scale: 1.03, rotateX: 10, rotateY: -5 }}
+                                whileTap={{ scale: 0.95, translateY: 8, boxShadow: '0 0px 0 rgb(13,148,136), 0 0px 0px rgba(20,184,166,0.4)' }}
+                                style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}
+                                onClick={() => handleDownloadArtwork()}
                                 disabled={processing}
-                                className="py-2 px-2.5 bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-extrabold rounded-lg shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer"
+                                className="w-full py-4 bg-teal-500 hover:bg-teal-600 text-white text-[15px] font-black rounded-xl shadow-[0_8px_0_rgb(13,148,136),0_15px_20px_rgba(20,184,166,0.4)] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer relative border-b-2 border-teal-700 mx-auto"
                               >
-                                <Download className="w-3 h-3" /> Get Transparent PNG
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (backdropType === 'transparent') {
-                                    setBackdropType('color');
-                                  }
-                                  setTimeout(() => handleDownloadArtwork(), 50);
-                                }}
-                                disabled={processing}
-                                className="py-2 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-extrabold rounded-lg shadow-xs transition-all flex items-center justify-center gap-1 cursor-pointer"
-                              >
-                                <Download className="w-3 h-3" /> Download with BG
-                              </button>
+                                <motion.div 
+                                  animate={{ y: [0, -4, 0] }}
+                                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                                  style={{ transform: 'translateZ(30px)' }}
+                                >
+                                  <Download className="w-6 h-6 drop-shadow-md" /> 
+                                </motion.div>
+                                <span style={{ transform: 'translateZ(30px)' }} className="drop-shadow-md tracking-wide">DOWNLOAD 3D</span>
+                              </motion.button>
                             </div>
                           </div>
                         )}

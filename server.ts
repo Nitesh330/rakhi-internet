@@ -7,6 +7,7 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import { encryptPDF, decryptPDF } from "cryptpdf";
 import Parser from "rss-parser";
+import { v2 as cloudinary } from 'cloudinary';
 
 const rssParser = new Parser();
 
@@ -818,6 +819,61 @@ If no person is detected, return default values (x: 50, y: 55, scale: 1.0, stret
     } catch (error) {
       console.error("Detect body bounds API Error:", error);
       res.json({ x: 50, y: 55, scale: 1.0, stretch: 1.0 });
+    }
+  });
+
+  app.post("/api/remove-bg", async (req, res) => {
+    try {
+      const { image } = req.body;
+      if (!image) return res.status(400).json({ error: "Image is required" });
+
+      if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET || !process.env.CLOUDINARY_CLOUD_NAME) {
+        return res.status(500).json({ error: "Cloudinary configuration is missing. Please add credentials in settings." });
+      }
+
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+      });
+
+      // Upload with background removal
+      const uploadResult = await cloudinary.uploader.upload(image, {
+        background_removal: "cloudinary_ai",
+      });
+
+      // Poll until the background is removed
+      let isReady = false;
+      let attempts = 0;
+      let finalUrl = uploadResult.secure_url;
+      
+      while (attempts < 30 && !isReady) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+          const resource = await cloudinary.api.resource(uploadResult.public_id);
+          const bgRemovalStatus = resource?.info?.background_removal?.cloudinary_ai?.status;
+          
+          if (bgRemovalStatus === 'complete') {
+            isReady = true;
+            finalUrl = uploadResult.secure_url.replace(/\.[^/.]+$/, ".png");
+          } else if (bgRemovalStatus === 'failed') {
+            return res.status(500).json({ error: "Background removal failed on Cloudinary" });
+          }
+        } catch (pollErr) {
+          console.error("Error polling Cloudinary:", pollErr);
+        }
+        attempts++;
+      }
+
+      if (isReady) {
+        res.json({ url: finalUrl });
+      } else {
+        res.status(408).json({ error: "Request timed out waiting for background removal" });
+      }
+
+    } catch (error: any) {
+      console.error("Cloudinary BG removal error:", error);
+      res.status(500).json({ error: error.message || "Unknown error during background removal" });
     }
   });
 

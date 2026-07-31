@@ -83,6 +83,7 @@ const HERO_SLIDES = [
     hindiTitle: "भविष्य की डिजिटल सेवाएं",
     subtitle: "Experience the future with our AI-enhanced services for photo editing, document formatting, and more.",
     image: heroBg,
+    video: "/hero_video.mp4.mp4",
     badgeBg: "bg-purple-500/10 text-purple-400 border-purple-500/20",
     accentText: "text-purple-400",
     btnBg: "bg-purple-600 hover:bg-purple-700 shadow-purple-600/30",
@@ -531,15 +532,7 @@ export default function App() {
                       <Scissors className="w-3.5 h-3.5" /> Photo Background
                       Remover
                     </button>
-                    <button
-                      onClick={() => {
-                        setPhotoToolActiveTab("clothes-changer");
-                        setPhotoToolsModalOpen(true);
-                      }}
-                      className="text-left px-4 py-2.5 text-xs text-gray-700 transition-all duration-300 hover:bg-purple-50/80 hover:text-purple-700 hover:scale-105 hover:translate-x-2 hover:-rotate-1 hover:shadow-md hover:z-10 relative flex items-center gap-2 rounded-lg mx-1"
-                    >
-                      <Shirt className="w-3.5 h-3.5" /> AI Clothes Changer
-                    </button>
+
                   </div>
                 </div>
                 <div className="relative group" style={{ perspective: "1200px" }}>
@@ -868,27 +861,7 @@ export default function App() {
                             </div>
                           </button>
 
-                          {/* Photo Clothes Changer */}
-                          <button
-                            onClick={() => {
-                              setPhotoToolActiveTab("clothes-changer");
-                              setPhotoToolsModalOpen(true);
-                              setMobileMenuOpen(false);
-                            }}
-                            className="w-full flex items-center gap-2.5 p-2.5 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-xl transition-all text-left"
-                          >
-                            <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
-                              <Shirt className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <span className="text-[9px] text-purple-600 font-extrabold uppercase tracking-wider block leading-none mb-0.5">
-                                AI Tools
-                              </span>
-                              <span className="text-xs font-black text-slate-700">
-                                Clothes Changer
-                              </span>
-                            </div>
-                          </button>
+
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -1149,6 +1122,21 @@ export default function App() {
             {/* Background Images with AnimatePresence */}
             <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
               <AnimatePresence mode="popLayout">
+                {HERO_SLIDES[currentSlide].video ? (
+                  <motion.video
+                    key={currentSlide}
+                    initial={{ opacity: 0, scale: 1.08 }}
+                    animate={{ opacity: 0.65, scale: 1.02 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.9, ease: "easeInOut" }}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    src={HERO_SLIDES[currentSlide].video}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                ) : (
                   <motion.div
                     key={currentSlide}
                     initial={{ opacity: 0, scale: 1.08 }}
@@ -1160,6 +1148,7 @@ export default function App() {
                       backgroundImage: `url(${HERO_SLIDES[currentSlide].image})`,
                     }}
                   />
+                )}
               </AnimatePresence>
               {/* Vignette / Overlay Gradients */}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-slate-950/50" />
