@@ -78,10 +78,10 @@ import heroBg from "./assets/images/rakhi_internet_shop_bg_1783157086957.jpg";
 const HERO_SLIDES = [
   {
     id: "ai",
-    badge: "AI Powered Services",
-    title: "Next-Gen Digital Solutions",
-    hindiTitle: "भविष्य की डिजिटल सेवाएं",
-    subtitle: "Experience the future with our AI-enhanced services for photo editing, document formatting, and more.",
+    badge: "",
+    title: "",
+    hindiTitle: "",
+    subtitle: "",
     image: heroBg,
     video: "/hero_video.mp4.mp4",
     badgeBg: "bg-purple-500/10 text-purple-400 border-purple-500/20",
@@ -1321,15 +1321,11 @@ export default function App() {
                             All Services <ArrowRight className="w-5 h-5" />
                           </button>
                         </>
-                      ) : (
+                      ) : HERO_SLIDES[currentSlide].type !== "ai" && (
                         <button
                           onClick={() => {
-                            if (HERO_SLIDES[currentSlide].type === "ai") {
-                              setPhotoToolsModalOpen(true);
-                            } else {
-                              setCurrentView("csc-portal");
-                              window.scrollTo(0, 0);
-                            }
+                            setCurrentView("csc-portal");
+                            window.scrollTo(0, 0);
                           }}
                           className={`px-8 py-4 rounded-full font-bold text-white transition-all transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-2 w-full sm:w-auto ${HERO_SLIDES[currentSlide].btnBg}`}
                         >
@@ -2652,14 +2648,13 @@ export default function App() {
             ref={robotConstraintsRef}
             className="fixed inset-0 pointer-events-none z-[999999]"
           />
-
           <motion.div
             drag
             dragConstraints={robotConstraintsRef}
             dragElastic={0.1}
             dragMomentum={true}
             onDragStart={() => setShowAiTooltip(false)}
-            className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[999999] pointer-events-auto select-none touch-none flex flex-col items-end justify-end"
+            className="fixed bottom-6 right-4 md:bottom-8 md:right-8 z-[999999] pointer-events-auto select-none touch-none flex flex-col items-end justify-end"
             initial={{ opacity: 0, y: 50, scale: 0.5 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
@@ -2686,11 +2681,11 @@ export default function App() {
                   <div className="absolute -bottom-2 right-4 w-4 h-4 bg-white border-b border-r border-slate-100 transform rotate-45"></div>
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden">
+                      <div className="w-8 h-8 flex items-center justify-center">
                         <img
                           src={creatorImage}
                           alt="AI"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain drop-shadow-md pointer-events-none"
                         />
                       </div>
                       <span className="text-xs font-black text-slate-800 tracking-wide uppercase">
@@ -2720,78 +2715,20 @@ export default function App() {
               className="flex items-center justify-center cursor-pointer origin-bottom"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              onTap={() => {
+              onClick={() => {
                 setCurrentView("chat-portal");
                 setShowAiTooltip(false);
                 window.scrollTo(0, 0);
               }}
             >
-              <motion.div
-                className="relative flex items-center justify-center w-24 h-24 md:w-32 md:h-32"
-                style={{ transformStyle: 'preserve-3d' }}
-                animate={{
-                  y: [-5, 5, -5],
-                }}
-                transition={{
-                  y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                }}
-              >
-                {/* 3D Inner Core Glow */}
-                <motion.div 
-                  className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl pointer-events-none"
-                  animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+              <div className="relative w-24 h-24 md:w-32 md:h-32 flex items-center justify-center z-10 drop-shadow-2xl">
+                <img
+                  src={creatorImage}
+                  alt="AI Bot"
+                  draggable="false"
+                  className="w-full h-full object-contain pointer-events-none select-none"
                 />
-                
-                {/* Outer 3D Gyroscopic Orbit Ring 1 with Glowing Orbital Node */}
-                <motion.div
-                  animate={{ rotateZ: [0, 360], rotateX: [70, 75, 70] }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                  className={`absolute w-full h-full border-2 border-dashed border-blue-400/60 shadow-[0_0_15px_rgba(59,130,246,0.4)] rounded-full pointer-events-none`}
-                  style={{ transformStyle: 'preserve-3d' }}
-                >
-                  {/* Orbital Light Node */}
-                  <motion.div 
-                    animate={{ scale: [0.8, 1.5, 0.8] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyan-400 shadow-[0_0_12px_#22d3ee] rounded-full"
-                  />
-                </motion.div>
-
-                {/* Outer 3D Gyroscopic Orbit Ring 2 with Counter-Rotation */}
-                <motion.div
-                  animate={{ rotateZ: [360, 0], rotateY: [65, 70, 65] }}
-                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                  className={`absolute w-full h-full border-2 border-indigo-400/60 shadow-[0_0_15px_rgba(99,102,241,0.3)] rounded-full pointer-events-none scale-110`}
-                  style={{ transformStyle: 'preserve-3d' }}
-                >
-                  <motion.div 
-                    animate={{ scale: [1, 1.8, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 bg-indigo-400 shadow-[0_0_10px_#818cf8] rounded-full"
-                  />
-                </motion.div>
-
-                {/* Central Avatar with Glassmorphism */}
-                <div className="relative w-14 h-14 md:w-20 md:h-20 rounded-full border border-blue-300/40 bg-white/10 backdrop-blur-md shadow-[0_10px_30px_rgba(59,130,246,0.4)] flex items-center justify-center overflow-hidden z-10" style={{ transform: 'translateZ(20px)' }}>
-                  <img
-                    src={creatorImage}
-                    alt="AI Bot"
-                    draggable="false"
-                    className="w-full h-full object-cover scale-[1.1] pointer-events-none select-none"
-                  />
-                  {/* Glass highlight */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent opacity-50 z-20 pointer-events-none" />
-                </div>
-                
-                {/* 3D Platform/Shadow under the bot */}
-                <motion.div 
-                   className="absolute -bottom-4 w-16 md:w-20 h-4 bg-blue-500/40 rounded-[100%] blur-md"
-                   animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.2, 0.5] }}
-                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                   style={{ transform: 'rotateX(75deg)' }}
-                />
-              </motion.div>
+              </div>
             </motion.div>
           </motion.div>
         </>
