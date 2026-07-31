@@ -2076,7 +2076,7 @@ export default function App() {
                       key={idx}
                       initial={{ opacity: 0, rotateX: -60, rotateY: 20, scale: 0.8, y: 100, z: -200 }}
                       whileInView={{ opacity: 1, rotateX: 0, rotateY: 0, scale: 1, y: 0, z: 0 }}
-                      viewport={{ once: true, amount: 0.2 }}
+                      viewport={{ once: false, amount: 0.2 }}
                       whileHover={{ 
                         scale: 1.08,
                         rotateY: -12,
