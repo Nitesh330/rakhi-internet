@@ -68,6 +68,7 @@ import TypingCenter from "./components/TypingCenter";
 import PrintService from "./components/PrintService";
 import AdminDashboard from "./components/AdminDashboard";
 import PhotoTools from "./components/PhotoTools";
+import ImageResizer from "./components/ImageResizer";
 import LatestLinksModal from "./components/LatestLinksModal";
 // @ts-ignore
 import heroBg from "./assets/images/rakhi_internet_shop_bg_1783157086957.jpg";
@@ -217,6 +218,7 @@ export default function App() {
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [pdfToolsModalOpen, setPdfToolsModalOpen] = useState(false);
   const [photoToolsModalOpen, setPhotoToolsModalOpen] = useState(false);
+  const [imageResizerModalOpen, setImageResizerModalOpen] = useState(false);
   const [photoToolActiveTab, setPhotoToolActiveTab] = useState<
     "bg-remover" | "clothes-changer"
   >("bg-remover");
@@ -290,6 +292,9 @@ export default function App() {
         handled = true;
       } else if (pdfToolsModalOpen) {
         setPdfToolsModalOpen(false);
+        handled = true;
+      } else if (imageResizerModalOpen) {
+        setImageResizerModalOpen(false);
         handled = true;
       } else if (photoToolsModalOpen) {
         setPhotoToolsModalOpen(false);
@@ -412,7 +417,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans text-gray-900 selection:bg-blue-100 overflow-x-hidden">
+    <div className="min-h-screen bg-[#fafafa] font-sans text-gray-900 selection:bg-blue-100">
       {/* 1. Navigation Bar */}
       {currentView !== "chat-portal" && (
         <nav
@@ -531,6 +536,15 @@ export default function App() {
                     >
                       <Scissors className="w-3.5 h-3.5" /> Photo Background
                       Remover
+                    </button>
+                    <div className="h-px bg-gray-100 my-1 mx-2"></div>
+                    <button
+                      onClick={() => {
+                        setImageResizerModalOpen(true);
+                      }}
+                      className="text-left px-4 py-2.5 text-xs text-gray-700 transition-all duration-300 hover:bg-blue-50/80 hover:text-blue-700 hover:scale-105 hover:translate-x-2 hover:-rotate-1 hover:shadow-md hover:z-10 relative flex items-center gap-2 rounded-lg mx-1"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" /> Image Resizer
                     </button>
 
                   </div>
@@ -857,6 +871,26 @@ export default function App() {
                               </span>
                               <span className="text-xs font-black text-slate-700">
                                 Background Remover
+                              </span>
+                            </div>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setImageResizerModalOpen(true);
+                              setMobileMenuOpen(false);
+                            }}
+                            className="w-full flex items-center gap-2.5 p-2.5 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-xl transition-all text-left"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                              <Sparkles className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <span className="text-[9px] text-indigo-600 font-extrabold uppercase tracking-wider block leading-none mb-0.5">
+                                AI Tools
+                              </span>
+                              <span className="text-xs font-black text-slate-700">
+                                Image Resizer
                               </span>
                             </div>
                           </button>
@@ -2517,6 +2551,17 @@ export default function App() {
 
                   <li>
                     <button
+                      onClick={() => {
+                        setImageResizerModalOpen(true);
+                      }}
+                      className="text-gray-400 hover:text-white transition-colors flex items-center gap-1.5 text-left"
+                    >
+                      <Sparkles className="w-4 h-4" /> Image Resizer
+                    </button>
+                  </li>
+
+                  <li>
+                    <button
                       onClick={() => openContactModal("Bhaichara DJ Sound")}
                       className="text-gray-400 hover:text-white transition-colors flex items-center gap-1.5 text-left"
                     >
@@ -2642,9 +2687,9 @@ export default function App() {
       )}
 
       {currentView !== "chat-portal" && (
-        <>
+        <div className="fixed bottom-6 right-4 md:bottom-8 md:right-8 z-[999999] pointer-events-none flex flex-col items-end justify-end">
           <motion.div
-            className="fixed bottom-6 right-4 md:bottom-8 md:right-8 z-[999999] pointer-events-auto select-none flex flex-col items-end justify-end"
+            className="pointer-events-auto select-none flex flex-col items-end justify-end"
             initial={{ opacity: 0, y: 50, scale: 0.5 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
@@ -2721,7 +2766,7 @@ export default function App() {
               </div>
             </motion.div>
           </motion.div>
-        </>
+        </div>
       )}
 
       <ContactModal
@@ -2772,6 +2817,33 @@ export default function App() {
               </button>
               <div className="overflow-y-auto flex-1 mt-16">
                 <PhotoTools initialTab={photoToolActiveTab} />
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {imageResizerModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto" style={{ perspective: "1500px" }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, rotateX: -20 }}
+              animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+              exit={{ opacity: 0, scale: 0.8, rotateX: 20 }}
+              transition={{ type: "spring", stiffness: 200, damping: 20 }}
+              className="relative w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col transform-gpu"
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              <button
+                onClick={() => setImageResizerModalOpen(false)}
+                className="absolute top-6 right-6 z-50 p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors cursor-pointer transform-gpu"
+                style={{ transform: "translateZ(50px)" }}
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="overflow-y-auto flex-1">
+                <ImageResizer />
               </div>
             </motion.div>
           </div>

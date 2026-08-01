@@ -265,3 +265,4 @@
   transform: translateZ(2.5rem);
 }
 
+body { overflow-x: hidden; }
