@@ -2643,18 +2643,8 @@ export default function App() {
 
       {currentView !== "chat-portal" && (
         <>
-          {/* Reference for drag boundaries spanning the whole viewport */}
-          <div
-            ref={robotConstraintsRef}
-            className="fixed inset-0 pointer-events-none z-[999999]"
-          />
           <motion.div
-            drag
-            dragConstraints={robotConstraintsRef}
-            dragElastic={0.1}
-            dragMomentum={true}
-            onDragStart={() => setShowAiTooltip(false)}
-            className="fixed bottom-6 right-4 md:bottom-8 md:right-8 z-[999999] pointer-events-auto select-none touch-none flex flex-col items-end justify-end"
+            className="fixed bottom-6 right-4 md:bottom-8 md:right-8 z-[999999] pointer-events-auto select-none flex flex-col items-end justify-end"
             initial={{ opacity: 0, y: 50, scale: 0.5 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
