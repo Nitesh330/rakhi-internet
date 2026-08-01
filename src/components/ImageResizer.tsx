@@ -67,75 +67,55 @@ const ImageResizer = () => {
       
       const img = new Image();
       img.onload = () => {
-        // First try adjusting quality without changing dimensions
-        let minQ = 0.01;
-        let maxQ = 1.0;
-        let currentQ = 0.8;
+        let targetBytes = targetKBSize * 1024;
         let bestDataUrl = "";
         let bestSizeDiff = Infinity;
         let bestSize = 0;
         
-        let targetBytes = targetKBSize * 1024;
+        // Strategy: Keep quality high (0.8) to prevent visual degradation.
+        // Instead of dropping quality, we will scale down dimensions if needed.
+        let minScale = 0.1;
+        let maxScale = 1.0;
+        let currentScale = 1.0;
         
-        // Binary search for best quality
-        for (let i = 0; i < 7; i++) {
-          canvas.width = width;
-          canvas.height = height;
-          ctx?.clearRect(0, 0, width, height);
-          ctx?.drawImage(img, 0, 0, width, height);
+        // We use image/webp for better compression at same quality, or fallback to high-quality jpeg
+        const mimeType = "image/jpeg";
+        const quality = 0.8; 
+
+        // Binary search for the best scale that fits the target size
+        for (let i = 0; i < 10; i++) {
+          let testWidth = Math.max(1, Math.round(width * currentScale));
+          let testHeight = Math.max(1, Math.round(height * currentScale));
           
-          let dataUrl = canvas.toDataURL("image/jpeg", currentQ);
+          canvas.width = testWidth;
+          canvas.height = testHeight;
+          
+          // Use high-quality smoothing
+          if (ctx) {
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.clearRect(0, 0, testWidth, testHeight);
+            ctx.drawImage(img, 0, 0, testWidth, testHeight);
+          }
+          
+          let dataUrl = canvas.toDataURL(mimeType, quality);
           let base64str = dataUrl.split(',')[1];
           let decodedLen = atob(base64str).length;
           
           let diff = Math.abs(decodedLen - targetBytes);
-          if (diff < bestSizeDiff) {
+          if (diff < bestSizeDiff || decodedLen <= targetBytes) {
+            // Keep the one closest to target, or the largest one that is under target
             bestSizeDiff = diff;
             bestDataUrl = dataUrl;
             bestSize = decodedLen;
           }
           
           if (decodedLen > targetBytes) {
-            maxQ = currentQ;
+            maxScale = currentScale; // File too big, shrink dimensions
           } else {
-            minQ = currentQ;
+            minScale = currentScale; // File smaller than target, can afford larger dimensions
           }
-          currentQ = (minQ + maxQ) / 2;
-        }
-
-        // If even lowest quality is too big, start scaling down dimensions
-        if (bestSize > targetBytes * 1.15) {
-          let scaleMin = 0.1;
-          let scaleMax = 1.0;
-          let currentScale = 0.5;
-          
-          for (let i = 0; i < 7; i++) {
-            let testWidth = Math.max(1, Math.round(width * currentScale));
-            let testHeight = Math.max(1, Math.round(height * currentScale));
-            
-            canvas.width = testWidth;
-            canvas.height = testHeight;
-            ctx?.clearRect(0, 0, testWidth, testHeight);
-            ctx?.drawImage(img, 0, 0, testWidth, testHeight);
-            
-            let dataUrl = canvas.toDataURL("image/jpeg", 0.1); // Use low quality when scaling down for aggressive compression
-            let base64str = dataUrl.split(',')[1];
-            let decodedLen = atob(base64str).length;
-            
-            let diff = Math.abs(decodedLen - targetBytes);
-            if (diff < bestSizeDiff) {
-              bestSizeDiff = diff;
-              bestDataUrl = dataUrl;
-              bestSize = decodedLen;
-            }
-            
-            if (decodedLen > targetBytes) {
-              scaleMax = currentScale;
-            } else {
-              scaleMin = currentScale;
-            }
-            currentScale = (scaleMin + scaleMax) / 2;
-          }
+          currentScale = (minScale + maxScale) / 2;
         }
         
         resolve({ dataUrl: bestDataUrl, size: bestSize });
@@ -167,7 +147,11 @@ const ImageResizer = () => {
         const img = new Image();
         await new Promise<void>((resolve) => {
           img.onload = () => {
-            ctx?.drawImage(img, 0, 0, targetWidth, targetHeight);
+            if (ctx) {
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = 'high';
+              ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+            }
             finalDataUrl = canvas.toDataURL("image/jpeg", quality / 100);
             const base64str = finalDataUrl.split(',')[1];
             finalSize = atob(base64str).length;
