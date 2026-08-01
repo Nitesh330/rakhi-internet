@@ -603,8 +603,7 @@ export default function App() {
                       </p>
                     </div>
 
-                    <button
-                      onClick={() => openContactModal("", "jind")}
+                    <button onClick={() => openContactModal("", "jind")}
                       className="w-full flex items-center gap-3 text-left p-2.5 rounded-xl hover:bg-purple-50/50 transition-colors group/item cursor-pointer"
                     >
                       <div className="p-2 rounded-lg bg-purple-50 text-purple-600 group-hover/item:bg-purple-600 group-hover/item:text-white transition-colors">
@@ -621,8 +620,7 @@ export default function App() {
                       <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover/item:text-purple-500 group-hover/item:translate-x-1 transition-all" />
                     </button>
 
-                    <button
-                      onClick={() => openContactModal("", "narnaund")}
+                    <button onClick={() => openContactModal("", "narnaund")}
                       className="w-full flex items-center gap-3 text-left p-2.5 rounded-xl hover:bg-blue-50/50 transition-colors group/item cursor-pointer mt-1"
                     >
                       <div className="p-2 rounded-lg bg-blue-50 text-blue-600 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">
@@ -639,8 +637,7 @@ export default function App() {
                       <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover/item:text-blue-500 group-hover/item:translate-x-1 transition-all" />
                     </button>
 
-                    <button
-                      onClick={() => openContactModal("", "uchana")}
+                    <button onClick={() => openContactModal("", "uchana")}
                       className="w-full flex items-center gap-3 text-left p-2.5 rounded-xl hover:bg-emerald-50/50 transition-colors group/item cursor-pointer mt-1"
                     >
                       <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 group-hover/item:bg-emerald-600 group-hover/item:text-white transition-colors">
@@ -2583,8 +2580,7 @@ export default function App() {
                 <ul className="space-y-4">
                   <li>
                     <div className="flex items-start justify-between gap-2 group/loc p-2 -ml-2 rounded-xl hover:bg-white/5 transition-all">
-                      <button
-                        onClick={() => openContactModal("", "jind")}
+                      <button onClick={() => window.open("https://maps.google.com/?q=Govt+College+Jind+Haryana", "_blank")}
                         className="flex items-start gap-3 text-left cursor-pointer flex-1"
                       >
                         <MapPin className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5 group-hover/loc:scale-110 transition-transform" />
@@ -2611,8 +2607,7 @@ export default function App() {
                   </li>
                   <li>
                     <div className="flex items-start justify-between gap-2 group/loc p-2 -ml-2 rounded-xl hover:bg-white/5 transition-all">
-                      <button
-                        onClick={() => openContactModal("", "narnaund")}
+                      <button onClick={() => window.open("https://maps.google.com/?q=Old+Bus+Stand+Narnaund", "_blank")}
                         className="flex items-start gap-3 text-left cursor-pointer flex-1"
                       >
                         <MapPin className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5 group-hover/loc:scale-110 transition-transform" />
@@ -2639,8 +2634,7 @@ export default function App() {
                   </li>
                   <li>
                     <div className="flex items-start justify-between gap-2 group/loc p-2 -ml-2 rounded-xl hover:bg-white/5 transition-all">
-                      <button
-                        onClick={() => openContactModal("", "uchana")}
+                      <button onClick={() => window.open("https://maps.google.com/?q=Railway+Station+Uchana+Haryana", "_blank")}
                         className="flex items-start gap-3 text-left cursor-pointer flex-1"
                       >
                         <MapPin className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5 group-hover/loc:scale-110 transition-transform" />
