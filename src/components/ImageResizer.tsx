@@ -1,13 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Upload, Download, RefreshCw, X, Image as ImageIcon, Sliders, Maximize, HardDrive } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { Upload, Download, RefreshCw, X, Image as ImageIcon, Sliders, Maximize, HardDrive, File as FileIcon } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 const ImageResizer = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  
   const [originalSize, setOriginalSize] = useState({ width: 0, height: 0, bytes: 0 });
   const [targetWidth, setTargetWidth] = useState(800);
   const [targetHeight, setTargetHeight] = useState(600);
+  
+  // New: target file size in KB
+  const [targetKB, setTargetKB] = useState<number | ''>('');
+  
   const [quality, setQuality] = useState(80);
   const [maintainRatio, setMaintainRatio] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -26,13 +29,13 @@ const ImageResizer = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      
       const url = URL.createObjectURL(file);
       const img = new Image();
       img.onload = () => {
         setOriginalSize({ width: img.width, height: img.height, bytes: file.size });
         setTargetWidth(img.width);
         setTargetHeight(img.height);
+        setTargetKB(Math.round(file.size / 1024));
         setSelectedImage(url);
         setResultImage(null);
         setResultBytes(0);
@@ -57,33 +60,127 @@ const ImageResizer = () => {
     }
   };
 
+  const compressToTargetSize = async (imgUrl: string, targetKBSize: number, width: number, height: number): Promise<{dataUrl: string, size: number}> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      
+      const img = new Image();
+      img.onload = () => {
+        // First try adjusting quality without changing dimensions
+        let minQ = 0.01;
+        let maxQ = 1.0;
+        let currentQ = 0.8;
+        let bestDataUrl = "";
+        let bestSizeDiff = Infinity;
+        let bestSize = 0;
+        
+        let targetBytes = targetKBSize * 1024;
+        
+        // Binary search for best quality
+        for (let i = 0; i < 7; i++) {
+          canvas.width = width;
+          canvas.height = height;
+          ctx?.clearRect(0, 0, width, height);
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          let dataUrl = canvas.toDataURL("image/jpeg", currentQ);
+          let base64str = dataUrl.split(',')[1];
+          let decodedLen = atob(base64str).length;
+          
+          let diff = Math.abs(decodedLen - targetBytes);
+          if (diff < bestSizeDiff) {
+            bestSizeDiff = diff;
+            bestDataUrl = dataUrl;
+            bestSize = decodedLen;
+          }
+          
+          if (decodedLen > targetBytes) {
+            maxQ = currentQ;
+          } else {
+            minQ = currentQ;
+          }
+          currentQ = (minQ + maxQ) / 2;
+        }
+
+        // If even lowest quality is too big, start scaling down dimensions
+        if (bestSize > targetBytes * 1.15) {
+          let scaleMin = 0.1;
+          let scaleMax = 1.0;
+          let currentScale = 0.5;
+          
+          for (let i = 0; i < 7; i++) {
+            let testWidth = Math.max(1, Math.round(width * currentScale));
+            let testHeight = Math.max(1, Math.round(height * currentScale));
+            
+            canvas.width = testWidth;
+            canvas.height = testHeight;
+            ctx?.clearRect(0, 0, testWidth, testHeight);
+            ctx?.drawImage(img, 0, 0, testWidth, testHeight);
+            
+            let dataUrl = canvas.toDataURL("image/jpeg", 0.1); // Use low quality when scaling down for aggressive compression
+            let base64str = dataUrl.split(',')[1];
+            let decodedLen = atob(base64str).length;
+            
+            let diff = Math.abs(decodedLen - targetBytes);
+            if (diff < bestSizeDiff) {
+              bestSizeDiff = diff;
+              bestDataUrl = dataUrl;
+              bestSize = decodedLen;
+            }
+            
+            if (decodedLen > targetBytes) {
+              scaleMax = currentScale;
+            } else {
+              scaleMin = currentScale;
+            }
+            currentScale = (scaleMin + scaleMax) / 2;
+          }
+        }
+        
+        resolve({ dataUrl: bestDataUrl, size: bestSize });
+      };
+      img.src = imgUrl;
+    });
+  };
+
   const handleResize = () => {
     if (!selectedImage) return;
     setIsProcessing(true);
 
-    setTimeout(() => {
-      const canvas = document.createElement("canvas");
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
-      const ctx = canvas.getContext("2d");
+    setTimeout(async () => {
+      let finalDataUrl = "";
+      let finalSize = 0;
 
-      const img = new Image();
-      img.onload = () => {
-        ctx?.drawImage(img, 0, 0, targetWidth, targetHeight);
-        
-        // Use JPEG for quality compression
-        const dataUrl = canvas.toDataURL("image/jpeg", quality / 100);
-        setResultImage(dataUrl);
-        
-        // Calculate approx size
-        const base64str = dataUrl.split(',')[1];
-        const decoded = atob(base64str);
-        setResultBytes(decoded.length);
-        
-        setIsProcessing(false);
-      };
-      img.src = selectedImage;
-    }, 500); // add slight delay for animation
+      if (targetKB !== '') {
+        // Try to hit specific KB size
+        const result = await compressToTargetSize(selectedImage, Number(targetKB), targetWidth, targetHeight);
+        finalDataUrl = result.dataUrl;
+        finalSize = result.size;
+      } else {
+        // Standard resize based on quality slider
+        const canvas = document.createElement("canvas");
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        const ctx = canvas.getContext("2d");
+
+        const img = new Image();
+        await new Promise<void>((resolve) => {
+          img.onload = () => {
+            ctx?.drawImage(img, 0, 0, targetWidth, targetHeight);
+            finalDataUrl = canvas.toDataURL("image/jpeg", quality / 100);
+            const base64str = finalDataUrl.split(',')[1];
+            finalSize = atob(base64str).length;
+            resolve();
+          };
+          img.src = selectedImage;
+        });
+      }
+
+      setResultImage(finalDataUrl);
+      setResultBytes(finalSize);
+      setIsProcessing(false);
+    }, 500);
   };
 
   return (
@@ -230,6 +327,24 @@ const ImageResizer = () => {
                     </h3>
                     
                     <div className="space-y-6 relative z-10">
+                      
+                      {/* Target File Size Input */}
+                      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+                        <label className="block text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                          <FileIcon className="w-3.5 h-3.5" /> Target File Size (KB)
+                        </label>
+                        <input 
+                          type="number" 
+                          placeholder="e.g. 50"
+                          value={targetKB}
+                          onChange={(e) => setTargetKB(e.target.value === '' ? '' : Number(e.target.value))}
+                          className="w-full bg-white border-2 border-indigo-200 rounded-xl px-4 py-3 text-indigo-700 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm placeholder-indigo-300"
+                        />
+                        <p className="text-[10px] font-bold text-indigo-400 mt-2">
+                          Enter desired size in KB. Will auto-adjust quality & size.
+                        </p>
+                      </div>
+
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Width (px)</label>
@@ -266,24 +381,26 @@ const ImageResizer = () => {
                         <span className="text-sm font-bold text-slate-700 group-hover:text-indigo-700 transition-colors">Maintain Aspect Ratio</span>
                       </label>
 
-                      <div className="pt-2">
-                        <div className="flex justify-between items-end mb-2">
-                          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Quality / File Size</label>
-                          <span className="text-xs font-black text-indigo-600 bg-indigo-100 px-2 py-1 rounded-md">{quality}%</span>
+                      {targetKB === '' && (
+                        <div className="pt-2">
+                          <div className="flex justify-between items-end mb-2">
+                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Quality (if no target size)</label>
+                            <span className="text-xs font-black text-indigo-600 bg-indigo-100 px-2 py-1 rounded-md">{quality}%</span>
+                          </div>
+                          <input 
+                            type="range" 
+                            min="1" 
+                            max="100" 
+                            value={quality}
+                            onChange={(e) => setQuality(parseInt(e.target.value))}
+                            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                          />
+                          <div className="flex justify-between mt-2 text-[10px] font-bold text-slate-400">
+                            <span>Smaller File</span>
+                            <span>Better Quality</span>
+                          </div>
                         </div>
-                        <input 
-                          type="range" 
-                          min="1" 
-                          max="100" 
-                          value={quality}
-                          onChange={(e) => setQuality(parseInt(e.target.value))}
-                          className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-                        />
-                        <div className="flex justify-between mt-2 text-[10px] font-bold text-slate-400">
-                          <span>Smaller File</span>
-                          <span>Better Quality</span>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
 

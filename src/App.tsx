@@ -327,6 +327,7 @@ export default function App() {
     contactModalOpen,
     pdfToolsModalOpen,
     photoToolsModalOpen,
+    imageResizerModalOpen,
     courierTrackModalOpen,
     courierRatesModalOpen,
     mobileMenuOpen,
@@ -339,6 +340,7 @@ export default function App() {
       contactModalOpen ||
       pdfToolsModalOpen ||
       photoToolsModalOpen ||
+      imageResizerModalOpen ||
       courierTrackModalOpen ||
       courierRatesModalOpen ||
       mobileMenuOpen ||
@@ -357,6 +359,7 @@ export default function App() {
     contactModalOpen,
     pdfToolsModalOpen,
     photoToolsModalOpen,
+    imageResizerModalOpen,
     courierTrackModalOpen,
     courierRatesModalOpen,
     mobileMenuOpen,
