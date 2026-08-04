@@ -5,12 +5,12 @@
 // @ts-ignore
 import creatorImage from "./assets/ai-removebg-preview.png";
 const developerImage = "/nn.png";
-const manojImage = "/manoj.png";
-const manishImage = "/manish.png";
-const sonuImage = "/sonu.png";
-const ashishImage = "/Ashish.png";
+const manojImage = "/images/manoj.png";
+const manishImage = "/images/manish.png";
+const sonuImage = "/images/sonu.png";
+const ashishImage = "/images/Ashish.png";
 
-const pankajImage = "/pankaj.png";
+const pankajImage = "/images/pankaj.png";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Moon,
@@ -84,7 +84,7 @@ const HERO_SLIDES = [
     hindiTitle: "",
     subtitle: "",
     image: heroBg,
-    video: "/hero_video.mp4.mp4",
+    video: "",
     badgeBg: "bg-purple-500/10 text-purple-400 border-purple-500/20",
     accentText: "text-purple-400",
     btnBg: "bg-purple-600 hover:bg-purple-700 shadow-purple-600/30",
@@ -210,6 +210,7 @@ const BRANCH_EXPERTS = [
 
 export default function App() {
   const robotConstraintsRef = useRef(null);
+  const isDraggingRef = useRef(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobileCourierOpen, setMobileCourierOpen] = useState(false);
@@ -2138,11 +2139,11 @@ export default function App() {
                             className={`absolute -inset-1.5 rounded-full bg-gradient-to-tr ${member.gradient} opacity-20 group-hover/card:opacity-100 transition-all duration-700 pointer-events-none blur-[3px]`}
                           />
 
-                          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-[4px] border-white shadow-xl relative group-hover/card:scale-105 transition-transform duration-500 z-10 bg-white">
+                          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-[4px] border-white shadow-xl relative group-hover/card:scale-105 transition-transform duration-500 z-10 bg-white flex items-center justify-center">
                             <img
                               src={member.image}
                               alt={member.name}
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
+                              className={`transition-transform duration-700 group-hover/card:scale-110 ${member.name === "Ashish Dhankar" ? "w-[180%] h-[180%] max-w-none object-contain" : "w-full h-full object-cover"}`}
                             />
                           </div>
 
@@ -2252,8 +2253,11 @@ export default function App() {
                   <Sparkles className="w-4 h-4 text-blue-500 animate-pulse" />
                   Founder & Chief Architect
                 </div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight uppercase mb-3 sm:mb-4">
-                  Meet The Developer (संस्थापक से मिलें)
+                <h2 
+                  className="text-4xl sm:text-5xl md:text-6xl font-black text-blue-600 uppercase mb-4 sm:mb-5 tracking-tight"
+                  style={{ textShadow: "1px 1px 0 #1e40af, 2px 2px 0 #1e3a8a, 3px 3px 0 #172554, 4px 4px 0 #0f172a, 5px 5px 10px rgba(0,0,0,0.4)" }}
+                >
+                  Meet The Developer
                 </h2>
                 <p className="text-slate-500 text-sm md:text-base leading-relaxed font-medium">
                   Connect, collaborate, and grow with the creator of Haryana's
@@ -2688,6 +2692,8 @@ export default function App() {
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
             drag
             dragMomentum={false}
+            onDragStart={() => isDraggingRef.current = true}
+            onDragEnd={() => { setTimeout(() => isDraggingRef.current = false, 150) }}
           >
             {/* AI Greeting Tooltip */}
             <AnimatePresence>
@@ -2745,7 +2751,8 @@ export default function App() {
               className="flex items-center justify-center cursor-pointer origin-bottom"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => {
+              onClick={(e) => {
+                if (isDraggingRef.current) return;
                 setCurrentView("chat-portal");
                 setShowAiTooltip(false);
                 window.scrollTo(0, 0);
