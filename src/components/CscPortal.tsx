@@ -175,15 +175,27 @@ const CSC_SERVICES: CscService[] = [
   // Utilities & Banking
   {
     id: 'electricity',
-    name: 'Electricity & Water Bill Payment',
-    hindiName: 'बिजली और पानी बिल भुगतान',
+    name: 'Electricity Bill Payment',
+    hindiName: 'बिजली बिल भुगतान',
     category: 'utility',
-    desc: 'Instant online bill payments for DHBVN/UHBVN power connections, water bills, property tax, and instant receipt printing.',
-    hindiDesc: 'DHBVN/UHBVN बिजली बिलों, पानी के बिलों और संपत्ति कर का तत्काल भुगतान व पक्की रसीद।',
+    desc: 'Instant online bill payments for DHBVN/UHBVN power connections and instant receipt printing.',
+    hindiDesc: 'DHBVN/UHBVN बिजली बिलों का तत्काल भुगतान व पक्की रसीद।',
     requiredDocs: ['Consumer Account Number (Electricity Bill)', 'Registered Mobile Number'],
     duration: 'Instant (Receipt in 1 minute)',
     status: 'Active',
     officialUrl: 'https://epayment.dhbvn.org.in/'
+  },
+  {
+    id: 'water',
+    name: 'Water Bill Payment',
+    hindiName: 'पानी बिल भुगतान',
+    category: 'utility',
+    desc: 'Instant online bill payments for water and sewer charges, and instant receipt printing.',
+    hindiDesc: 'पानी के बिलों का तत्काल भुगतान व पक्की रसीद।',
+    requiredDocs: ['Consumer Account Number / Water Bill Number', 'Registered Mobile Number'],
+    duration: 'Instant (Receipt in 1 minute)',
+    status: 'Active',
+    officialUrl: 'https://phedharyana.gov.in/'
   },
   {
     id: 'aeps',
@@ -622,15 +634,15 @@ export default function CscPortal({ onBackToHome, openContactModal }: CscPortalP
               <div className="flex flex-col gap-2.5 text-xs text-slate-600">
                 <div className="flex gap-2">
                   <strong className="font-extrabold text-slate-800 w-16">Narnaund:</strong>
-                  <span>Main Bazar, Near Bus Stand, Narnaund</span>
+                  <span>Bus Stand, Front of Police Station, Old, Narnaund, Haryana 125039</span>
                 </div>
                 <div className="flex gap-2">
                   <strong className="font-extrabold text-slate-800 w-16">Jind:</strong>
-                  <span>Opposite Civil Hospital, Jind</span>
+                  <span>Bhiwani Bypass, main chowk, Jind, Haryana 126102</span>
                 </div>
                 <div className="flex gap-2">
                   <strong className="font-extrabold text-slate-800 w-16">Uchana:</strong>
-                  <span>Railway Station Road, Uchana</span>
+                  <span>main market railway road uchana</span>
                 </div>
               </div>
             </div>

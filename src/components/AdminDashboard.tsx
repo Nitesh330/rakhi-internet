@@ -1192,7 +1192,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
             <div className="flex items-center gap-2 mb-6">
               <span className="font-semibold text-slate-700">Filter by Branch:</span>
               <div className="flex items-center gap-2 bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
-                {['All', 'Narnaund', 'Jind', 'Uchana'].map(branch => (
+                {['All', 'Jind', 'Narnaund', 'Uchana'].map(branch => (
                   <button
                     key={branch}
                     onClick={() => setSelectedBranch(branch)}

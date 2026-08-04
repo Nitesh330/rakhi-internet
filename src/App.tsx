@@ -135,6 +135,30 @@ const HERO_SLIDES = [
 
 const BRANCH_EXPERTS = [
   {
+    name: "Pankaj Pawar",
+    role: "Admission & Courier Counselor",
+    branch: "Jind Branch",
+    whatsapp: "918053504080",
+    image: pankajImage,
+    specialty: "Distance Education Admissions Counseling",
+    themeColor: "indigo",
+    badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-100/80",
+    gradient: "from-indigo-500 via-blue-500 to-cyan-500",
+    ringColor: "ring-indigo-100",
+  },
+  {
+    name: "Ashish Dhankar",
+    role: "CSC Work Specialist",
+    branch: "Jind Branch",
+    whatsapp: "918683030747",
+    image: ashishImage,
+    specialty: "Digital Records & Bulk Form Processing",
+    themeColor: "cyan",
+    badgeColor: "bg-cyan-50 text-cyan-700 border-cyan-100/80",
+    gradient: "from-cyan-400 via-teal-500 to-sky-500",
+    ringColor: "ring-cyan-100",
+  },
+  {
     name: "Manish Sheoran",
     role: "Branch Manager & IT Head",
     branch: "Narnaund Branch",
@@ -170,30 +194,6 @@ const BRANCH_EXPERTS = [
     badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-100/80",
     gradient: "from-emerald-400 via-teal-500 to-cyan-500",
     ringColor: "ring-emerald-100",
-  },
-  {
-    name: "Pankaj Pawar",
-    role: "Admission & Courier Counselor",
-    branch: "Jind Branch",
-    whatsapp: "918053504080",
-    image: pankajImage,
-    specialty: "Distance Education Admissions Counseling",
-    themeColor: "indigo",
-    badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-100/80",
-    gradient: "from-indigo-500 via-blue-500 to-cyan-500",
-    ringColor: "ring-indigo-100",
-  },
-  {
-    name: "Ashish Dhankar",
-    role: "CSC Work Specialist",
-    branch: "Jind Branch",
-    whatsapp: "918683030747",
-    image: ashishImage,
-    specialty: "Digital Records & Bulk Form Processing",
-    themeColor: "cyan",
-    badgeColor: "bg-cyan-50 text-cyan-700 border-cyan-100/80",
-    gradient: "from-cyan-400 via-teal-500 to-sky-500",
-    ringColor: "ring-cyan-100",
   },
   {
     name: "Manoj Kharab",
@@ -614,7 +614,7 @@ export default function App() {
                           Jind Branch
                         </p>
                         <p className="text-[9px] text-slate-400 font-bold uppercase">
-                          BHIWANI ROAD BYPASS (ADMISSIONS)
+                          BHIWANI BYPASS, MAIN CHOWK, JIND, HARYANA 126102
                         </p>
                       </div>
                       <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover/item:text-purple-500 group-hover/item:translate-x-1 transition-all" />
@@ -631,7 +631,7 @@ export default function App() {
                           Narnaund Branch
                         </p>
                         <p className="text-[9px] text-slate-400 font-bold uppercase">
-                          OLD BUS STAND (MAIN OFFICE)
+                          BUS STAND, FRONT OF POLICE STATION, OLD, NARNAUND, HARYANA 125039
                         </p>
                       </div>
                       <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover/item:text-blue-500 group-hover/item:translate-x-1 transition-all" />
@@ -648,7 +648,7 @@ export default function App() {
                           Uchana Branch
                         </p>
                         <p className="text-[9px] text-slate-400 font-bold uppercase">
-                          MAIN MARKET (COURIER & CSC)
+                          MAIN MARKET RAILWAY ROAD UCHANA
                         </p>
                       </div>
                       <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover/item:text-emerald-500 group-hover/item:translate-x-1 transition-all" />
@@ -1026,7 +1026,7 @@ export default function App() {
                             </div>
                             <div>
                               <span className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider block leading-none mb-0.5">
-                                BHIWANI ROAD BYPASS JIND
+                                BHIWANI BYPASS, MAIN CHOWK, JIND, HARYANA 126102
                               </span>
                               <span className="text-xs font-black text-slate-700">
                                 Jind Branch
@@ -1045,7 +1045,7 @@ export default function App() {
                             </div>
                             <div>
                               <span className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider block leading-none mb-0.5">
-                                OLD BUS STAND
+                                BUS STAND, FRONT OF POLICE STATION, OLD, NARNAUND, HARYANA 125039
                               </span>
                               <span className="text-xs font-black text-slate-700">
                                 Narnaund Branch
@@ -1064,7 +1064,7 @@ export default function App() {
                             </div>
                             <div>
                               <span className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider block leading-none mb-0.5">
-                                MAIN MARKET
+                                MAIN MARKET RAILWAY ROAD UCHANA
                               </span>
                               <span className="text-xs font-black text-slate-700">
                                 Uchana Branch
@@ -1270,9 +1270,13 @@ export default function App() {
                     {/* Context-Specific Action Buttons */}
                     {HERO_SLIDES[currentSlide].type !== "ai" && (
                       <div className="flex flex-wrap justify-center gap-3 mb-6 w-full" style={{ perspective: "1000px" }}>
-                        {["Narnaund", "Jind", "Uchana"].map((loc, idx) => (
+                        {[
+                          { name: "Jind", map: "https://maps.google.com/?q=Bhiwani+Bypass,+main+chowk,+Jind,+Haryana+126102" },
+                          { name: "Narnaund", map: "https://maps.google.com/?q=Bus+Stand,+Front+of+Police+Station,+Old,+Narnaund,+Haryana+125039" },
+                          { name: "Uchana", map: "https://maps.google.com/?q=Railway+Station+Uchana+Haryana" }
+                        ].map((loc, idx) => (
                           <motion.div
-                            key={loc}
+                            key={loc.name}
                             initial={{ opacity: 0, rotateX: 90, z: -50 }}
                             animate={{ opacity: 1, rotateX: 0, z: 0 }}
                             transition={{ 
@@ -1287,12 +1291,12 @@ export default function App() {
                               scale: 1.1, 
                               z: 20 
                             }}
-                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${loc},+Haryana`, '_blank')}
+                            onClick={() => window.open(loc.map, '_blank')}
                             className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-5 py-2.5 rounded-full border border-cyan-500/30 text-cyan-300 text-xs sm:text-sm font-black uppercase tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.2)] cursor-pointer hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] hover:border-cyan-400/60 transition-colors"
                             style={{ transformStyle: "preserve-3d" }}
                           >
                             <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]" />
-                            {loc}
+                            {loc.name}
                           </motion.div>
                         ))}
                       </div>
@@ -1310,7 +1314,7 @@ export default function App() {
                               }}
                               className="px-8 py-4 rounded-full font-bold text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 backdrop-blur-md transition-all transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center gap-2 w-full sm:w-auto"
                             >
-                              Track Shipment <Truck className="w-5 h-5 animate-drive-truck" />
+                              Track Shipment <Truck className="w-5 h-5 text-amber-400 fill-amber-400/20 animate-drive-truck" />
                             </button>
                         </>
                       ) : HERO_SLIDES[currentSlide].type === "university" ? (
@@ -2080,7 +2084,7 @@ export default function App() {
                 </h2>
                 <p className="text-slate-500 text-sm sm:text-base leading-relaxed font-medium">
                   Dedicated, certified digital service specialists across
-                  Narnaund, Jind, and Uchana branches, committed to offering
+                  Jind, Narnaund, and Uchana branches, committed to offering
                   lightning-fast assistance.
                 </p>
               </div>
@@ -2572,7 +2576,7 @@ export default function App() {
                 <ul className="space-y-4">
                   <li>
                     <div className="flex items-start justify-between gap-2 group/loc p-2 -ml-2 rounded-xl hover:bg-white/5 transition-all">
-                      <button onClick={() => window.open("https://maps.google.com/?q=Bhiwani+Road+Bypass+Jind", "_blank")}
+                      <button onClick={() => window.open("https://maps.google.com/?q=Bhiwani+Bypass,+main+chowk,+Jind,+Haryana+126102", "_blank")}
                         className="flex items-start gap-3 text-left cursor-pointer flex-1"
                       >
                         <MapPin className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5 group-hover/loc:scale-110 transition-transform" />
@@ -2581,12 +2585,12 @@ export default function App() {
                             Jind Branch
                           </span>
                           <span className="text-xs text-gray-400 group-hover/loc:text-gray-300 transition-colors block">
-                            Bhiwani Road Bypass, Jind [HR] 126102
+                            Bhiwani Bypass, main chowk, Jind, Haryana 126102
                           </span>
                         </div>
                       </button>
                       <a
-                        href="https://maps.google.com/?q=Bhiwani+Road+Bypass+Jind"
+                        href="https://maps.google.com/?q=Bhiwani+Bypass,+main+chowk,+Jind,+Haryana+126102"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-blue-600 transition-all flex items-center gap-1 text-[11px] font-semibold flex-shrink-0 cursor-pointer"
@@ -2599,7 +2603,7 @@ export default function App() {
                   </li>
                   <li>
                     <div className="flex items-start justify-between gap-2 group/loc p-2 -ml-2 rounded-xl hover:bg-white/5 transition-all">
-                      <button onClick={() => window.open("https://maps.google.com/?q=Old+Bus+Stand+Narnaund", "_blank")}
+                      <button onClick={() => window.open("https://maps.google.com/?q=Bus+Stand,+Front+of+Police+Station,+Old,+Narnaund,+Haryana+125039", "_blank")}
                         className="flex items-start gap-3 text-left cursor-pointer flex-1"
                       >
                         <MapPin className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5 group-hover/loc:scale-110 transition-transform" />
@@ -2608,12 +2612,12 @@ export default function App() {
                             Narnaund Branch
                           </span>
                           <span className="text-xs text-gray-400 group-hover/loc:text-gray-300 transition-colors block">
-                            Old Bus Stand, Narnaund [HR] 125039
+                            Bus Stand, Front of Police Station, Old, Narnaund, Haryana 125039
                           </span>
                         </div>
                       </button>
                       <a
-                        href="https://maps.google.com/?q=Old+Bus+Stand+Narnaund"
+                        href="https://maps.google.com/?q=Bus+Stand,+Front+of+Police+Station,+Old,+Narnaund,+Haryana+125039"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-blue-600 transition-all flex items-center gap-1 text-[11px] font-semibold flex-shrink-0 cursor-pointer"
@@ -2626,7 +2630,7 @@ export default function App() {
                   </li>
                   <li>
                     <div className="flex items-start justify-between gap-2 group/loc p-2 -ml-2 rounded-xl hover:bg-white/5 transition-all">
-                      <button onClick={() => window.open("https://maps.google.com/?q=Railway+Station+Uchana+Haryana", "_blank")}
+                      <button onClick={() => window.open("https://maps.google.com/?q=main+market+railway+road+uchana", "_blank")}
                         className="flex items-start gap-3 text-left cursor-pointer flex-1"
                       >
                         <MapPin className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5 group-hover/loc:scale-110 transition-transform" />
@@ -2635,12 +2639,12 @@ export default function App() {
                             Uchana Branch
                           </span>
                           <span className="text-xs text-gray-400 group-hover/loc:text-gray-300 transition-colors block">
-                            Main Market, Railway Road, Uchana [HR] 126115
+                            main market railway road uchana
                           </span>
                         </div>
                       </button>
                       <a
-                        href="https://maps.google.com/?q=Railway+Station+Uchana+Haryana"
+                        href="https://maps.google.com/?q=main+market+railway+road+uchana"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-blue-600 transition-all flex items-center gap-1 text-[11px] font-semibold flex-shrink-0 cursor-pointer"

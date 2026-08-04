@@ -1011,7 +1011,7 @@ export default function UniversityPortal({ onBackToHome, openContactModal }: Uni
                 </div>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed font-semibold">
-                You can directly visit or call our branches at <strong className="text-blue-700">Narnaund, Jind, & Uchana</strong> for prompt application filing, counseling choice filling, and fees payment receipts.
+                You can directly visit or call our branches at <strong className="text-blue-700">Jind, Narnaund, & Uchana</strong> for prompt application filing, counseling choice filling, and fees payment receipts.
               </p>
               <button 
                 onClick={() => openContactModal('Direct University Admission Helpline')}

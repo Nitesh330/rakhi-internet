@@ -35,7 +35,7 @@ const BRANCHES: Record<string, BranchInfo> = {
     id: 'jind',
     name: 'Jind Branch',
     hindiName: 'जींद प्रवेश केंद्र',
-    address: 'Bhiwani Road Bypass, Jind, Haryana 126102',
+    address: 'Bhiwani Bypass, main chowk, Jind, Haryana 126102',
     contacts: [
       { label: 'Pankaj Pawar', hindiLabel: 'पंकज पंवार', number: '+91 80535-04080' },
       { label: 'Ashish Dhankar', hindiLabel: 'आशीष धनखड़', number: '+91 86830-30747' }
@@ -43,7 +43,7 @@ const BRANCHES: Record<string, BranchInfo> = {
     whatsapp: '918683030747',
     manager: 'Sonu Sheoran (Senior Counselor)',
     email: 'jind@rakhiinternet.com',
-    mapLink: 'https://maps.google.com/?q=Bhiwani+Road+Bypass+Jind',
+    mapLink: 'https://maps.google.com/?q=Bhiwani+Bypass,+main+chowk,+Jind,+Haryana+126102',
     gradient: 'from-purple-600 via-fuchsia-600 to-pink-600',
     badgeBg: 'bg-purple-50 text-purple-700 border-purple-100',
     textColor: 'text-purple-600'
@@ -51,8 +51,8 @@ const BRANCHES: Record<string, BranchInfo> = {
   narnaund: {
     id: 'narnaund',
     name: 'Narnaund Branch',
-    hindiName: 'नारनौंद मुख्य कार्यालय',
-    address: 'Old Bus Stand, Narnaund, Haryana 125039',
+    hindiName: 'नारनौंद शाखा',
+    address: 'Bus Stand, Front of Police Station, Old, Narnaund, Haryana 125039',
     contacts: [
       { label: 'Manish Sheoran', hindiLabel: 'मनीष श्योराण', number: '+91 98960-73011' },
       { label: 'Sonu Sheoran', hindiLabel: 'सोनू श्योराण', number: '+91 80599-70904' }
@@ -60,7 +60,7 @@ const BRANCHES: Record<string, BranchInfo> = {
     whatsapp: '918059970904',
     manager: 'Manish Sheoran (Branch Head)',
     email: 'narnaund@rakhiinternet.com',
-    mapLink: 'https://maps.google.com/?q=Old+Bus+Stand+Narnaund',
+    mapLink: 'https://maps.google.com/?q=Bus+Stand,+Front+of+Police+Station,+Old,+Narnaund,+Haryana+125039',
     gradient: 'from-blue-600 via-indigo-600 to-indigo-700',
     badgeBg: 'bg-blue-50 text-blue-700 border-blue-100',
     textColor: 'text-blue-600'
@@ -69,14 +69,14 @@ const BRANCHES: Record<string, BranchInfo> = {
     id: 'uchana',
     name: 'Uchana Branch',
     hindiName: 'उचाना कूरियर डेस्क',
-    address: 'Main Market, Railway Road, Uchana, Haryana 126115',
+    address: 'main market railway road uchana',
     contacts: [
       { label: 'Aman Sheokand', hindiLabel: 'अमन श्योकंद', number: '+91 90532-51092' }
     ],
     whatsapp: '919053251092',
     manager: 'Aman Sheokand (Branch Head)',
     email: 'uchana@rakhiinternet.com',
-    mapLink: 'https://maps.google.com/?q=Railway+Station+Uchana+Haryana',
+    mapLink: 'https://maps.google.com/?q=main+market+railway+road+uchana',
     gradient: 'from-emerald-600 via-teal-600 to-cyan-600',
     badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-100',
     textColor: 'text-emerald-600'
