@@ -1965,14 +1965,6 @@ export default function App() {
                         url: "https://joinindianarmy.nic.in/",
                       },
                       {
-                        name: "SBI Probationary Officer (PO)",
-                        url: "https://sbi.co.in/web/careers",
-                      },
-                      {
-                        name: "IBPS Clerk Recruitment",
-                        url: "https://www.ibps.in/",
-                      },
-                      {
                         name: "Delhi Police Recruitment",
                         url: "https://delhipolice.gov.in/recruitments",
                       },
@@ -2031,7 +2023,7 @@ export default function App() {
                       },
                       {
                         name: "IGNOU Admission Portal",
-                        url: "https://ignouadmission.samarth.edu.in/",
+                        url: "https://www.ignou.ac.in/",
                       },
                       {
                         name: "Ambedkar Medhavi Chhattar Yojna",
@@ -2580,7 +2572,7 @@ export default function App() {
                 <ul className="space-y-4">
                   <li>
                     <div className="flex items-start justify-between gap-2 group/loc p-2 -ml-2 rounded-xl hover:bg-white/5 transition-all">
-                      <button onClick={() => window.open("https://maps.google.com/?q=Govt+College+Jind+Haryana", "_blank")}
+                      <button onClick={() => window.open("https://maps.google.com/?q=Bhiwani+Road+Bypass+Jind", "_blank")}
                         className="flex items-start gap-3 text-left cursor-pointer flex-1"
                       >
                         <MapPin className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5 group-hover/loc:scale-110 transition-transform" />
@@ -2594,7 +2586,7 @@ export default function App() {
                         </div>
                       </button>
                       <a
-                        href="https://maps.google.com/?q=Govt+College+Jind+Haryana"
+                        href="https://maps.google.com/?q=Bhiwani+Road+Bypass+Jind"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-blue-600 transition-all flex items-center gap-1 text-[11px] font-semibold flex-shrink-0 cursor-pointer"
@@ -2643,7 +2635,7 @@ export default function App() {
                             Uchana Branch
                           </span>
                           <span className="text-xs text-gray-400 group-hover/loc:text-gray-300 transition-colors block">
-                            Main Market, Uchana [HR] 126115
+                            Main Market, Railway Road, Uchana [HR] 126115
                           </span>
                         </div>
                       </button>

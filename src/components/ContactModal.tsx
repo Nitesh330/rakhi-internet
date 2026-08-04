@@ -35,7 +35,7 @@ const BRANCHES: Record<string, BranchInfo> = {
     id: 'jind',
     name: 'Jind Branch',
     hindiName: 'जींद प्रवेश केंद्र',
-    address: 'Opposite Govt. College, Bhiwani Road Bypass, Jind, Haryana 126102',
+    address: 'Bhiwani Road Bypass, Jind, Haryana 126102',
     contacts: [
       { label: 'Pankaj Pawar', hindiLabel: 'पंकज पंवार', number: '+91 80535-04080' },
       { label: 'Ashish Dhankar', hindiLabel: 'आशीष धनखड़', number: '+91 86830-30747' }
@@ -43,7 +43,7 @@ const BRANCHES: Record<string, BranchInfo> = {
     whatsapp: '918683030747',
     manager: 'Sonu Sheoran (Senior Counselor)',
     email: 'jind@rakhiinternet.com',
-    mapLink: 'https://maps.google.com/?q=Govt+College+Jind+Haryana',
+    mapLink: 'https://maps.google.com/?q=Bhiwani+Road+Bypass+Jind',
     gradient: 'from-purple-600 via-fuchsia-600 to-pink-600',
     badgeBg: 'bg-purple-50 text-purple-700 border-purple-100',
     textColor: 'text-purple-600'
@@ -69,7 +69,7 @@ const BRANCHES: Record<string, BranchInfo> = {
     id: 'uchana',
     name: 'Uchana Branch',
     hindiName: 'उचाना कूरियर डेस्क',
-    address: 'Main Market, Near Railway Station, Uchana, Haryana 126115',
+    address: 'Main Market, Railway Road, Uchana, Haryana 126115',
     contacts: [
       { label: 'Aman Sheokand', hindiLabel: 'अमन श्योकंद', number: '+91 90532-51092' }
     ],
